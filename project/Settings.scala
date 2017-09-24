@@ -14,7 +14,7 @@ object Settings {
   lazy val libSettings = commonSettings ++ Seq(
     name := "akka-stream-cassandra",
     libraryDependencies ++= libDependencies,
-    licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT")),
+    licenses := Seq("MIT" -> url("https://github.com/niqdev/akka-stream-cassandra/blob/master/LICENSE")),
     homepage := Some(url(s"https://github.com/niqdev/akka-stream-cassandra")),
     scmInfo := Some(
       ScmInfo(url(s"https://github.com/niqdev/akka-stream-cassandra"),
