@@ -11,7 +11,3 @@
 # run main
 sbt example/run
 ```
-
-### Documentation
-
-* [pgp](doc/pgp.md)
