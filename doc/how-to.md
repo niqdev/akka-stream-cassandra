@@ -63,7 +63,7 @@ travis encrypt-file .travis/local.secrets.tar -o .travis/secrets.tar.enc -p
 # encrypt the PGP passphrase
 travis encrypt 'PGP_PASS=XXX' --add
 
-# encrypt Bintray credentials (escape special characters)
+# encrypt Bintray credentials (username/API Key)(escape special characters)
 travis encrypt 'BINTRAY_USER=XXX' --add
 travis encrypt 'BINTRAY_PASS=XXX' --add
 
