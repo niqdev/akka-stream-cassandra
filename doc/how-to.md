@@ -39,6 +39,13 @@ gpg2 --homedir . --export-secret-keys --armor --output secring.asc
 * Config [sbt-release-early](https://github.com/scalacenter/sbt-release-early/wiki/How-to-release-in-Travis-(CI))
 
 ```
+>>> add local.* to .gitignore
+
+mkdir .travis
+cp keys/pubring.asc keys/secring.asc .travis
+mv .travis/pubring.asc .travis/local.pubring.asc
+mv .travis/secring.asc .travis/local.secring.asc
+
 # install travis cli
 sudo gem2.3 install travis -v 1.8.8 --no-rdoc --no-ri
 
@@ -56,10 +63,12 @@ travis encrypt-file .travis/local.secrets.tar -o .travis/secrets.tar.enc -p
 # encrypt the PGP passphrase
 travis encrypt 'PGP_PASS=XXX' --add
 
-# encrypt Bintray credentials
+# encrypt Bintray credentials (escape special characters)
 travis encrypt 'BINTRAY_USER=XXX' --add
 travis encrypt 'BINTRAY_PASS=XXX' --add
 
 >>> @see after_success
 >>> @see deploy
+
+>>> add new Maven package on Bintray
 ```
