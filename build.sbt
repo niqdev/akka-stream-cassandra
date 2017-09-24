@@ -1,6 +1,11 @@
-name := "akka-stream-cassandra"
+import Settings._
 
-version := "0.1"
+lazy val lib = project.in(file("lib"))
+  .settings(libSettings)
 
-scalaVersion := "2.12.3"
-        
+lazy val example = project.in(file("example"))
+  .settings(exampleSettings)
+  .dependsOn(lib)
+
+lazy val `akka-stream-cassandra` = project.in(file("."))
+  .aggregate(lib, example)
