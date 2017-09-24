@@ -1,8 +1,5 @@
 import Dependencies._
-import ch.epfl.scala.sbt.release.ReleaseEarlyPlugin.autoImport._
-import com.typesafe.sbt.SbtPgp.autoImport._
 import sbt.Keys._
-import sbt._
 
 object Settings {
 
@@ -13,16 +10,7 @@ object Settings {
 
   lazy val libSettings = commonSettings ++ Seq(
     name := "akka-stream-cassandra",
-    libraryDependencies ++= libDependencies,
-    licenses := Seq("MIT" -> url("https://github.com/niqdev/akka-stream-cassandra/blob/master/LICENSE")),
-    homepage := Some(url(s"https://github.com/niqdev/akka-stream-cassandra")),
-    scmInfo := Some(
-      ScmInfo(url(s"https://github.com/niqdev/akka-stream-cassandra"),
-        "scm:git:git@github.com:niqdev/akka-stream-cassandra.git")),
-    developers := List(Developer("niqdev", "niqdev", "niqdev@gmail.com", url("https://github.com/niqdev/akka-stream-cassandra"))),
-    pgpPublicRing := file("./travis/local.pubring.asc"),
-    pgpSecretRing := file("./travis/local.secring.asc"),
-    releaseEarlyWith := BintrayPublisher
+    libraryDependencies ++= libDependencies
   )
 
   lazy val exampleSettings = commonSettings ++ Seq(
