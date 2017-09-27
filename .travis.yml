@@ -15,10 +15,8 @@ before_install:
 script:
   - sbt ++$TRAVIS_SCALA_VERSION clean test
 after_success:
-  - echo "TRAVIS_SECURE_ENV_VARS";
-  - echo $TRAVIS_SECURE_ENV_VARS;
   - if [ $TRAVIS_PULL_REQUEST = 'false' ]; then
-      sbt -Dbintray.user=$BINTRAY_USER -Dbintray.pass=$BINTRAY_PASS ++$TRAVIS_SCALA_VERSION releaseEarly;
+      sbt ++$TRAVIS_SCALA_VERSION releaseEarly;
     fi
 deploy:
   on:
