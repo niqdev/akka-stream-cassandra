@@ -1,4 +1,5 @@
-package com.github.niqdev.setting
+package com.github.niqdev
+package setting
 
 import com.typesafe.config.ConfigFactory
 
