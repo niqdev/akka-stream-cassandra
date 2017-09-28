@@ -8,4 +8,5 @@ lazy val example = project.in(file("example"))
   .dependsOn(lib)
 
 lazy val `akka-stream-cassandra` = project.in(file("."))
+  .disablePlugins(RevolverPlugin)
   .aggregate(lib, example)
