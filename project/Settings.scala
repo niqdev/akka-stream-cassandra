@@ -1,5 +1,6 @@
 import Dependencies._
 import ch.epfl.scala.sbt.release.ReleaseEarlyPlugin.autoImport._
+import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport.scalafmtOnCompile
 import com.typesafe.sbt.SbtPgp.autoImport._
 import sbt.Keys._
 import sbt._
@@ -13,7 +14,9 @@ object Settings {
     organization := "com.github.niqdev",
     organizationName := "niqdev",
     startYear := Some(2017),
-    licenses := Seq("MIT" -> url("https://github.com/niqdev/akka-stream-cassandra/blob/master/LICENSE"))
+    licenses := Seq("MIT" -> url("https://github.com/niqdev/akka-stream-cassandra/blob/master/LICENSE")),
+
+    scalafmtOnCompile in Compile := true
   )
 
   lazy val libSettings = commonSettings ++ Seq(

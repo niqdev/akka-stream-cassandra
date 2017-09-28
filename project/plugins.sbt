@@ -1,5 +1,6 @@
 addSbtPlugin("ch.epfl.scala" % "sbt-release-early" % "1.2.0")
 addSbtPlugin("de.heikoseeberger" % "sbt-header" % "2.0.0")
+addSbtPlugin("com.lucidchart" % "sbt-scalafmt" % "1.12")
 addSbtPlugin("io.spray" % "sbt-revolver" % "0.9.0")
 addSbtPlugin("org.scalastyle" %% "scalastyle-sbt-plugin" % "1.0.0")
 addSbtPlugin("org.scoverage" % "sbt-scoverage" % "1.5.1")

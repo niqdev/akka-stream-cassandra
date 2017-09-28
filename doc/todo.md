@@ -4,7 +4,7 @@ Plugins
 * [x] sbt-release-early
 * [x] sbt-header
 * [x] sbt-revolver
-* [ ] sbt-scalafmt
+* [x] sbt-scalafmt
 * [x] scalastyle-sbt-plugin
 * [ ] sbt-scalafix
 * [x] sbt-scoverage

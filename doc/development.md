@@ -8,7 +8,10 @@ sbt "example/run-main com.github.niqdev.Main"
 # hot reload
 sbt ~re-start
 
-# add header manually
+# format code
+sbt scalafmt
+
+# add header
 sbt headerCreate
 
 # check style
