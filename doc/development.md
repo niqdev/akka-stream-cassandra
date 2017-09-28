@@ -7,6 +7,9 @@ sbt "example/run-main com.github.niqdev.Main"
 
 # hot reload
 sbt ~re-start
+
+# check style
+sbt scalastyle
 ```
 
 ### Documentation
