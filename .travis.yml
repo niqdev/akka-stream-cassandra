@@ -12,7 +12,7 @@ before_install:
       tar xv -C .travis -f .travis/secrets.tar;
     fi
 script:
-  - sbt ++$TRAVIS_SCALA_VERSION clean test
+  - sbt ++$TRAVIS_SCALA_VERSION clean scalastyle test
 after_success:
   - if [ $TRAVIS_PULL_REQUEST = 'false' ]; then
       sbt ++$TRAVIS_SCALA_VERSION releaseEarly;
