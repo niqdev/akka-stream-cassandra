@@ -3,20 +3,26 @@ import ch.epfl.scala.sbt.release.ReleaseEarlyPlugin.autoImport._
 import com.typesafe.sbt.SbtPgp.autoImport._
 import sbt.Keys._
 import sbt._
+import scoverage.ScoverageKeys._
 
 object Settings {
 
   lazy val commonSettings = Seq(
+    scalaVersion := V.scala,
+
     organization := "com.github.niqdev",
     organizationName := "niqdev",
     startYear := Some(2017),
-    licenses := Seq("MIT" -> url("https://github.com/niqdev/akka-stream-cassandra/blob/master/LICENSE")),
-    scalaVersion := V.scala
+    licenses := Seq("MIT" -> url("https://github.com/niqdev/akka-stream-cassandra/blob/master/LICENSE"))
   )
 
   lazy val libSettings = commonSettings ++ Seq(
     name := "akka-stream-cassandra",
     libraryDependencies ++= libDependencies,
+
+    coverageMinimum := 70,
+    coverageFailOnMinimum := true,
+
     homepage := Some(url(s"https://github.com/niqdev/akka-stream-cassandra")),
     scmInfo := Some(
       ScmInfo(url(s"https://github.com/niqdev/akka-stream-cassandra"),
