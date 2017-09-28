@@ -9,7 +9,7 @@ Plugins
 * [ ] sbt-scalafix
 * [x] sbt-scoverage
 * [ ] sbt-coveralls
-* [ ] sbt-dependency-graph
+* [x] sbt-dependency-graph
 * [ ] sbt-updates
 * [ ] sbt-site
 * [ ] [scalacOptions](https://tpolecat.github.io/2017/04/25/scalac-flags.html)
