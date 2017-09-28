@@ -72,3 +72,15 @@ travis encrypt 'BINTRAY_PASS=XXX' --add
 
 >>> add new Maven package on Bintray
 ```
+
+## coveralls
+
+* [sbt-coveralls](https://github.com/scoverage/sbt-coveralls)
+
+```
+# login with github credentials
+travis login
+
+# encrypt Token
+travis encrypt 'COVERALLS_REPO_TOKEN=XXX' --add
+```
