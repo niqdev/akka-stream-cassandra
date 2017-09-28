@@ -7,7 +7,7 @@ Plugins
 * [ ] sbt-scalafmt
 * [x] scalastyle-sbt-plugin
 * [ ] sbt-scalafix
-* [ ] sbt-scoverage
+* [x] sbt-scoverage
 * [ ] sbt-dependency-graph
 * [ ] sbt-updates
 * [ ] sbt-site
