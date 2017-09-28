@@ -8,13 +8,15 @@ object Settings {
 
   lazy val commonSettings = Seq(
     organization := "com.github.niqdev",
+    organizationName := "niqdev",
+    startYear := Some(2017),
+    licenses := Seq("MIT" -> url("https://github.com/niqdev/akka-stream-cassandra/blob/master/LICENSE")),
     scalaVersion := V.scala
   )
 
   lazy val libSettings = commonSettings ++ Seq(
     name := "akka-stream-cassandra",
     libraryDependencies ++= libDependencies,
-    licenses := Seq("MIT" -> url("https://github.com/niqdev/akka-stream-cassandra/blob/master/LICENSE")),
     homepage := Some(url(s"https://github.com/niqdev/akka-stream-cassandra")),
     scmInfo := Some(
       ScmInfo(url(s"https://github.com/niqdev/akka-stream-cassandra"),
