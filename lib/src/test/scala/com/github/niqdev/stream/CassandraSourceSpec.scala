@@ -24,9 +24,9 @@ package stream
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.Keep
-import akka.stream.testkit.scaladsl.TestSink
 import akka.testkit.{ImplicitSender, TestKit}
+import com.netflix.astyanax.model.ColumnFamily
+import com.netflix.astyanax.serializers.StringSerializer
 
 import scala.concurrent.ExecutionContext
 
@@ -34,25 +34,28 @@ final class CassandraSourceSpec
     extends TestKit(ActorSystem("test-actor-system"))
     with BaseSpec
     with ImplicitSender
-    with StopSystemAfterAll {
+    with StopSystemAfterAll
+    with EmbeddedCassandraSupport {
 
   private[this] implicit val materializer: ActorMaterializer = ActorMaterializer()
   private[this] implicit val executionContext: ExecutionContext = system.dispatcher
 
+  private[this] val columnFamily =
+    new ColumnFamily[String, String]("example", StringSerializer.get, StringSerializer.get)
+
+  override protected def beforeAll: Unit = {
+    super.beforeAll
+    startEmbeddedCassandra
+  }
+
+  override protected def afterAll(): Unit = {
+    super.afterAll()
+    shutdownEmbeddedCassandra
+  }
+
   "CassandraSource" must {
 
-    "verify counter" in {
-      val (_, subscriber) = CassandraSource()
-        .take(10)
-        .fold(0)(_ + _)
-        .toMat(TestSink.probe[Int])(Keep.both)
-        .run()
-
-      subscriber.request(1)
-      subscriber.expectNextPF {
-        case result => result shouldBe 55
-      }
-    }
+    "verify counter" in {}
 
   }
 
