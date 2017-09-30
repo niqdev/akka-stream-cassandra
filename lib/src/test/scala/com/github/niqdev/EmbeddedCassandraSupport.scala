@@ -40,8 +40,6 @@ import com.netflix.astyanax.{AstyanaxContext, Keyspace}
  */
 trait EmbeddedCassandraSupport { this: BaseSpec =>
 
-  AstyanaxContextFactory.getCachedKeyspace
-
   private[this] val sleepMillis = 3000
   private[this] var keyspace: Keyspace = _
 
@@ -52,7 +50,6 @@ trait EmbeddedCassandraSupport { this: BaseSpec =>
     SingletonEmbeddedCassandra.getInstance()
     Thread.sleep(sleepMillis)
     createKeyspace
-    Thread.sleep(sleepMillis)
   }
 
   def createKeyspace = {
@@ -76,10 +73,10 @@ trait EmbeddedCassandraSupport { this: BaseSpec =>
     keyspace = keyspaceContext.getClient
 
     val options = ImmutableMap
-      .builder[String, Object]()
+      .builder[String, AnyRef]()
       .put("strategy_options",
            ImmutableMap
-             .builder[String, Object]()
+             .builder[String, AnyRef]()
              .put("replication_factor", "1")
              .build())
       .put("strategy_class", "SimpleStrategy")
@@ -90,7 +87,6 @@ trait EmbeddedCassandraSupport { this: BaseSpec =>
   def shutdownEmbeddedCassandra: Unit = {
     log.debug("shutdown embedded cassandra")
     keyspace.dropKeyspace
-    Thread.sleep(sleepMillis)
     SingletonEmbeddedCassandra.getInstance().shutdown()
   }
 

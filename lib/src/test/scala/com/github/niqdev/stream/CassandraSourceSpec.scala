@@ -24,6 +24,8 @@ package stream
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
+import akka.stream.scaladsl.Keep
+import akka.stream.testkit.scaladsl.TestSink
 import akka.testkit.{ImplicitSender, TestKit}
 import com.netflix.astyanax.model.ColumnFamily
 import com.netflix.astyanax.serializers.StringSerializer
@@ -61,12 +63,15 @@ final class CassandraSourceSpec
     getKeyspace.createColumnFamily(columnFamily, Map.empty[String, AnyRef].asJava)
     columnFamily.describe(getKeyspace)
 
-    insertRow("rewKey1", "column1", "value1")
-    insertRow("rewKey1", "column2", "value2")
-    insertRow("rewKey1", "column3", "value3")
+    insertRow("rowKey1", "column1", "value1")
+    insertRow("rowKey1", "column2", "value2")
+    insertRow("rowKey1", "column3", "value3")
 
-    insertRow("rewKey2", "column1", "value1")
-    insertRow("rewKey2", "column2", "value2")
+    insertRow("rowKey2", "column1", "value1")
+    insertRow("rowKey2", "column2", "value2")
+
+    insertRow("rowKey3", "column1", "value1")
+    insertRow("rowKey3", "column2", "value2")
   }
 
   override protected def afterAll(): Unit = {
@@ -77,11 +82,15 @@ final class CassandraSourceSpec
 
   "CassandraSource" must {
 
-    "verify counter" in {
-      CassandraSource(getKeyspace, columnFamily)
-        .runForeach { row =>
-          log.debug(s"row: ${row.getKey}")
-        }
+    "verify row keys" in {
+      val (_, subscriber) = CassandraSource(getKeyspace, columnFamily)
+        .map(_.getKey)
+        .toMat(TestSink.probe[String])(Keep.both)
+        .run()
+
+      subscriber.request(3)
+
+      subscriber.expectNextUnorderedN(Vector("rowKey1", "rowKey2", "rowKey3"))
     }
 
   }
