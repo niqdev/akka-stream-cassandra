@@ -20,28 +20,40 @@
  */
 
 package com.github.niqdev
+package stream
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import com.github.niqdev.stream.CassandraSource
-import com.typesafe.scalalogging.Logger
+import akka.stream.scaladsl.Keep
+import akka.stream.testkit.scaladsl.TestSink
+import akka.testkit.{ImplicitSender, TestKit}
 
 import scala.concurrent.ExecutionContext
-import scala.util.{Failure, Success}
 
-object Main extends App {
-  private[this] lazy val log = Logger(getClass.getSimpleName)
+final class CassandraSourceSpec
+    extends TestKit(ActorSystem("test-actor-system"))
+    with BaseSpec
+    with ImplicitSender
+    with StopSystemAfterAll {
 
-  private[this] implicit val actorSystem: ActorSystem = ActorSystem("example-actor-system")
   private[this] implicit val materializer: ActorMaterializer = ActorMaterializer()
-  private[this] implicit val executionContext: ExecutionContext = actorSystem.dispatcher
+  private[this] implicit val executionContext: ExecutionContext = system.dispatcher
 
-  CassandraSource()
-    .take(10)
-    .runFold(0)(_ + _)
-    .onComplete {
-      case Success(result) => log.debug(s"result: $result")
-      case Failure(error) => log.error(s"error: $error")
+  "CassandraSource" must {
+
+    "verify counter" in {
+      val (_, subscriber) = CassandraSource()
+        .take(10)
+        .fold(0)(_ + _)
+        .toMat(TestSink.probe[Int])(Keep.both)
+        .run()
+
+      subscriber.request(1)
+      subscriber.expectNextPF {
+        case result => result shouldBe 55
+      }
     }
+
+  }
 
 }

@@ -20,28 +20,32 @@
  */
 
 package com.github.niqdev
+package stream
 
-import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
-import com.github.niqdev.stream.CassandraSource
-import com.typesafe.scalalogging.Logger
+import akka.NotUsed
+import akka.stream.scaladsl.Source
+import akka.stream.stage.{GraphStage, GraphStageLogic, OutHandler, StageLogging}
+import akka.stream.{Attributes, Outlet, SourceShape}
 
-import scala.concurrent.ExecutionContext
-import scala.util.{Failure, Success}
+private[stream] class CassandraSource extends GraphStage[SourceShape[Int]] {
 
-object Main extends App {
-  private[this] lazy val log = Logger(getClass.getSimpleName)
+  val out: Outlet[Int] = Outlet[Int]("CassandraSource.out")
 
-  private[this] implicit val actorSystem: ActorSystem = ActorSystem("example-actor-system")
-  private[this] implicit val materializer: ActorMaterializer = ActorMaterializer()
-  private[this] implicit val executionContext: ExecutionContext = actorSystem.dispatcher
+  override def shape: SourceShape[Int] = SourceShape(out)
 
-  CassandraSource()
-    .take(10)
-    .runFold(0)(_ + _)
-    .onComplete {
-      case Success(result) => log.debug(s"result: $result")
-      case Failure(error) => log.error(s"error: $error")
+  override def createLogic(inheritedAttributes: Attributes): GraphStageLogic =
+    new GraphStageLogic(shape) with StageLogging {
+      private var counter = 1
+
+      setHandler(out, new OutHandler {
+        override def onPull(): Unit = {
+          push(out, counter)
+          counter += 1
+        }
+      })
     }
+}
 
+object CassandraSource {
+  def apply(): Source[Int, NotUsed] = Source.fromGraph(new CassandraSource)
 }

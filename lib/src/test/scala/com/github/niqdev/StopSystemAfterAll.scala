@@ -21,27 +21,14 @@
 
 package com.github.niqdev
 
-import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
-import com.github.niqdev.stream.CassandraSource
-import com.typesafe.scalalogging.Logger
+import akka.testkit.TestKit
+import org.scalatest.{BeforeAndAfterAll, Suite}
 
-import scala.concurrent.ExecutionContext
-import scala.util.{Failure, Success}
+trait StopSystemAfterAll extends BeforeAndAfterAll { this: TestKit with Suite =>
 
-object Main extends App {
-  private[this] lazy val log = Logger(getClass.getSimpleName)
-
-  private[this] implicit val actorSystem: ActorSystem = ActorSystem("example-actor-system")
-  private[this] implicit val materializer: ActorMaterializer = ActorMaterializer()
-  private[this] implicit val executionContext: ExecutionContext = actorSystem.dispatcher
-
-  CassandraSource()
-    .take(10)
-    .runFold(0)(_ + _)
-    .onComplete {
-      case Success(result) => log.debug(s"result: $result")
-      case Failure(error) => log.error(s"error: $error")
-    }
+  override protected def afterAll(): Unit = {
+    super.afterAll()
+    TestKit.shutdownActorSystem(system)
+  }
 
 }

@@ -21,27 +21,27 @@
 
 package com.github.niqdev
 
-import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
-import com.github.niqdev.stream.CassandraSource
 import com.typesafe.scalalogging.Logger
+import org.scalatest._
 
-import scala.concurrent.ExecutionContext
-import scala.util.{Failure, Success}
+trait BaseSpec extends WordSpecLike with Matchers with BeforeAndAfterAll with BeforeAndAfter { this: Suite =>
 
-object Main extends App {
-  private[this] lazy val log = Logger(getClass.getSimpleName)
+  protected[this] val log = Logger(getClass.getName)
 
-  private[this] implicit val actorSystem: ActorSystem = ActorSystem("example-actor-system")
-  private[this] implicit val materializer: ActorMaterializer = ActorMaterializer()
-  private[this] implicit val executionContext: ExecutionContext = actorSystem.dispatcher
+  override protected def beforeAll: Unit = {
+    log.debug("beforeAll")
+  }
 
-  CassandraSource()
-    .take(10)
-    .runFold(0)(_ + _)
-    .onComplete {
-      case Success(result) => log.debug(s"result: $result")
-      case Failure(error) => log.error(s"error: $error")
-    }
+  before {
+    log.debug("before")
+  }
+
+  after {
+    log.debug("after")
+  }
+
+  override protected def afterAll: Unit = {
+    log.debug("afterAll")
+  }
 
 }
