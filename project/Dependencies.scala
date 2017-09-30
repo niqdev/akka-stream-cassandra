@@ -14,6 +14,7 @@ object Dependencies {
     val config = "1.3.1"
 
     val akka = "2.5.6"
+    val astyanax = "2.0.2"
 
     val scalatest = "3.0.4"
   }
@@ -23,7 +24,8 @@ object Dependencies {
     "com.typesafe.scala-logging" %% "scala-logging" % V.scalaLogging,
     "com.typesafe" % "config" % V.config,
 
-    N.typesafe %% "akka-stream" % V.akka
+    N.typesafe %% "akka-stream" % V.akka,
+    "com.netflix.astyanax" % "astyanax" % V.astyanax
   )
 
   lazy val testDependencies = Seq(

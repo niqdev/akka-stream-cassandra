@@ -23,11 +23,9 @@ package com.github.niqdev
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import com.github.niqdev.stream.CassandraSource
 import com.typesafe.scalalogging.Logger
 
 import scala.concurrent.ExecutionContext
-import scala.util.{Failure, Success}
 
 object Main extends App {
   private[this] lazy val log = Logger(getClass.getSimpleName)
@@ -36,12 +34,6 @@ object Main extends App {
   private[this] implicit val materializer: ActorMaterializer = ActorMaterializer()
   private[this] implicit val executionContext: ExecutionContext = actorSystem.dispatcher
 
-  CassandraSource()
-    .take(10)
-    .runFold(0)(_ + _)
-    .onComplete {
-      case Success(result) => log.debug(s"result: $result")
-      case Failure(error) => log.error(s"error: $error")
-    }
+  log.debug("TODO")
 
 }

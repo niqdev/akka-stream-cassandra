@@ -18,8 +18,7 @@ Libraries
 * [x] logback
 * [x] settings
 * [x] scalatest
-* [ ] akka
-* [ ] akka-stream
-* [ ] akka-testkit
-* [ ] akka-stream-testkit
-* [ ] astyanax
+* [x] akka-stream
+* [x] akka-testkit
+* [x] akka-stream-testkit
+* [x] astyanax
