@@ -28,27 +28,31 @@ import com.netflix.astyanax.connectionpool.impl.{
   ConnectionPoolType,
   CountingConnectionPoolMonitor
 }
+import com.netflix.astyanax.cql.test.utils.AstyanaxContextFactory
 import com.netflix.astyanax.impl.AstyanaxConfigurationImpl
 import com.netflix.astyanax.thrift.ThriftFamilyFactory
 import com.netflix.astyanax.util.SingletonEmbeddedCassandra
 import com.netflix.astyanax.{AstyanaxContext, Keyspace}
 
 /*
- * examples
  * https://github.com/Netflix/astyanax/search?q=embedded
+ * https://github.com/Netflix/astyanax/tree/0146a6fc6ad61c8eb0173e1f4dca9429a3f1e969
  */
 trait EmbeddedCassandraSupport { this: BaseSpec =>
+
+  AstyanaxContextFactory.getCachedKeyspace
 
   private[this] val sleepMillis = 3000
   private[this] var keyspace: Keyspace = _
 
-  def getKeyspace = keyspace
+  def getKeyspace: Keyspace = keyspace
 
-  def startEmbeddedCassandra = {
+  def startEmbeddedCassandra: Unit = {
     log.debug("start embedded cassandra")
     SingletonEmbeddedCassandra.getInstance()
     Thread.sleep(sleepMillis)
     createKeyspace
+    Thread.sleep(sleepMillis)
   }
 
   def createKeyspace = {
@@ -70,18 +74,6 @@ trait EmbeddedCassandraSupport { this: BaseSpec =>
 
     keyspaceContext.start()
     keyspace = keyspaceContext.getClient
-
-    /*
-    import collection.JavaConverters.mapAsJavaMapConverter
-
-    val options = Map(
-      "strategy_options" -> Map("replication_factor" -> "1"),
-      "strategy_class" -> "SimpleStrategy"
-    ).asJava
-
-    @throws java.lang.ClassCastException: scala.collection.immutable.Map$Map1 cannot be cast to java.util.Map
-    >>> forced to use guava ImmutableMap
-     */
 
     val options = ImmutableMap
       .builder[String, Object]()

@@ -24,7 +24,7 @@ object Settings {
     libraryDependencies ++= libDependencies,
 
     coverageMinimum := 70,
-    coverageFailOnMinimum := true,
+    coverageFailOnMinimum := false,
 
     homepage := Some(url(s"https://github.com/niqdev/akka-stream-cassandra")),
     scmInfo := Some(

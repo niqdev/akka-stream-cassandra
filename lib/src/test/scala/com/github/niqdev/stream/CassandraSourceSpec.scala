@@ -28,6 +28,7 @@ import akka.testkit.{ImplicitSender, TestKit}
 import com.netflix.astyanax.model.ColumnFamily
 import com.netflix.astyanax.serializers.StringSerializer
 
+import scala.collection.JavaConverters.mapAsJavaMapConverter
 import scala.concurrent.ExecutionContext
 
 final class CassandraSourceSpec
@@ -40,22 +41,48 @@ final class CassandraSourceSpec
   private[this] implicit val materializer: ActorMaterializer = ActorMaterializer()
   private[this] implicit val executionContext: ExecutionContext = system.dispatcher
 
-  private[this] val columnFamily =
+  private[this] val defaultTtl = 9999
+  private[this] val columnFamily: ColumnFamily[String, String] =
     new ColumnFamily[String, String]("example", StringSerializer.get, StringSerializer.get)
 
   override protected def beforeAll: Unit = {
     super.beforeAll
     startEmbeddedCassandra
+    initCassandra
+  }
+
+  private[this] def insertRow(rowKey: String, column: String, value: String, ttl: Int = defaultTtl) =
+    getKeyspace
+      .prepareColumnMutation(columnFamily, rowKey, column)
+      .putValue(value, ttl)
+      .execute()
+
+  private[this] def initCassandra = {
+    getKeyspace.createColumnFamily(columnFamily, Map.empty[String, AnyRef].asJava)
+    columnFamily.describe(getKeyspace)
+
+    insertRow("rewKey1", "column1", "value1")
+    insertRow("rewKey1", "column2", "value2")
+    insertRow("rewKey1", "column3", "value3")
+
+    insertRow("rewKey2", "column1", "value1")
+    insertRow("rewKey2", "column2", "value2")
   }
 
   override protected def afterAll(): Unit = {
     super.afterAll()
+    getKeyspace.dropColumnFamily(columnFamily)
     shutdownEmbeddedCassandra
   }
 
   "CassandraSource" must {
 
-    "verify counter" in {}
+    "verify counter" in {
+      CassandraSource(getKeyspace, columnFamily)
+        .runForeach { row =>
+          log.debug(s"row: ${row.getKey}")
+        }
+    }
 
   }
 
