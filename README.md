@@ -3,6 +3,7 @@
 [![Build Status][travis-image]][travis-url]
 [![Coverage Status][coveralls-image]][coveralls-url]
 [![Download][bintray-image]][bintray-url]
+[![Scaladoc][scaladoc-image]][scaladoc-url]
 
 [travis-image]: https://travis-ci.org/niqdev/akka-stream-cassandra.svg?branch=master
 [travis-url]: https://travis-ci.org/niqdev/akka-stream-cassandra
@@ -10,6 +11,8 @@
 [coveralls-url]: https://coveralls.io/github/niqdev/akka-stream-cassandra?branch=master
 [bintray-image]: https://api.bintray.com/packages/niqdev/maven/akka-stream-cassandra/images/download.svg
 [bintray-url]: https://bintray.com/niqdev/maven/akka-stream-cassandra/_latestVersion
+[scaladoc-image]: https://img.shields.io/badge/scaladoc-online-orange.svg
+[scaladoc-url]: https://niqdev.github.io/akka-stream-cassandra
 
 > TODO work in progress
 
