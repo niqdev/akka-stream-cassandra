@@ -26,7 +26,7 @@ Add the [jcenter](http://jcenter.bintray.com) repository in your build definitio
 resolvers += Resolver.jcenterRepo
 
 libraryDependencies ++= Seq(
-  "com.github.niqdev" %% "akka-stream-cassandra" % "0.6.0"
+  "com.github.niqdev" %% "akka-stream-cassandra" % "0.6.1"
 )
 ```
 
