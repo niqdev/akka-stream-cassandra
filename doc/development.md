@@ -8,6 +8,10 @@ sbt "example/run-main com.github.niqdev.Main"
 # debug test (remote)
 sbt clean test -jvm-debug 5005
 
+# run single test
+sbt "test:test-only *SettingsSpec"
+sbt "test:test-only *CassandraSourceSpec"
+
 # hot reload
 sbt ~re-start
 

@@ -28,6 +28,7 @@ import akka.NotUsed
 import akka.stream.scaladsl.Source
 import akka.stream.stage.{GraphStage, GraphStageLogic, OutHandler, StageLogging}
 import akka.stream.{Attributes, Outlet, SourceShape}
+import com.github.niqdev.setting.Settings
 import com.netflix.astyanax.Keyspace
 import com.netflix.astyanax.model.{ColumnFamily, Row}
 import com.netflix.astyanax.recipes.reader.AllRowsReader
@@ -76,10 +77,10 @@ private[stream] class CassandraSource[K, C](keyspace: Keyspace,
       override def preStart(): Unit = {
         super.preStart()
         log.debug(s"""
-            |createLogic#preStart
-            |page size: $pageSize
-            |queue size: $queueSize
-            |dequeue timeout (seconds): $dequeueTimeout
+             |createLogic#preStart
+             |page size: $pageSize
+             |queue size: $queueSize
+             |dequeue timeout (seconds): $dequeueTimeout
           """.stripMargin)
 
         // need to run in a different thread
@@ -121,17 +122,13 @@ private[stream] class CassandraSource[K, C](keyspace: Keyspace,
 }
 
 object CassandraSource {
-  // TODO move in conf
-  protected[stream] val defaultParallel = 12
-  protected[stream] val defaultPageSize = 1000
-  protected[stream] val defaultQueueSize = 3000
-  protected[stream] val defaultDequeueTimeout = 5 // seconds
+  private[this] val settings = Settings.Library
 
   def apply[K, C](keyspace: Keyspace,
                   columnFamily: ColumnFamily[K, C],
-                  parallel: Int = defaultParallel,
-                  pageSize: Int = defaultPageSize,
-                  queueSize: Int = defaultQueueSize,
-                  dequeueTimeout: Int = defaultDequeueTimeout): Source[Row[K, C], NotUsed] =
+                  parallel: Int = settings.parallel,
+                  pageSize: Int = settings.pageSize,
+                  queueSize: Int = settings.queueSize,
+                  dequeueTimeout: Int = settings.dequeueTimeout): Source[Row[K, C], NotUsed] =
     Source.fromGraph(new CassandraSource(keyspace, columnFamily, parallel, pageSize, queueSize, dequeueTimeout))
 }

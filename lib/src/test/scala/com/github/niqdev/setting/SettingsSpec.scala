@@ -22,24 +22,21 @@
 package com.github.niqdev
 package setting
 
-import com.typesafe.config.ConfigFactory
+final class SettingsSpec extends BaseSpec {
 
-object Settings {
-  private[this] lazy val config = ConfigFactory.load()
+  "Settings" must {
 
-  object Application {
-    private[this] lazy val applicationConfig = config getConfig "application"
+    "verify default application configuration" in {
+      Settings.Application.name shouldBe "akka-stream-cassandra"
+    }
 
-    val name: String = applicationConfig getString "name"
-  }
+    "verify default library configuration" in {
+      Settings.Library.parallel shouldBe 12
+      Settings.Library.pageSize shouldBe 1000
+      Settings.Library.queueSize shouldBe 3000
+      Settings.Library.dequeueTimeout shouldBe 5
+    }
 
-  object Library {
-    private[this] lazy val libConfig = config getConfig "akka-stream-cassandra"
-
-    val parallel: Int = libConfig getInt "parallel"
-    val pageSize: Int = libConfig getInt "page-size"
-    val queueSize: Int = libConfig getInt "queue-size"
-    val dequeueTimeout: Int = libConfig getInt "dequeue-timeout"
   }
 
 }

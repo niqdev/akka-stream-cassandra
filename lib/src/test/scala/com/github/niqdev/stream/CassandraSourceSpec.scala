@@ -85,13 +85,6 @@ final class CassandraSourceSpec
 
   "CassandraSource" must {
 
-    "verify default configuration" in {
-      CassandraSource.defaultParallel shouldBe 12
-      CassandraSource.defaultPageSize shouldBe 1000
-      CassandraSource.defaultQueueSize shouldBe 3000
-      CassandraSource.defaultDequeueTimeout shouldBe 5
-    }
-
     "verify empty table" in {
       val timeout = 1 // seconds
       val (_, subscriber) = CassandraSource(getKeyspace, emptyColumnFamily, dequeueTimeout = timeout)
