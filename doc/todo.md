@@ -12,7 +12,7 @@ Plugins
 * [x] sbt-coveralls
 * [x] sbt-dependency-graph
 * [x] sbt-updates
-* [ ] sbt-site
+* [x] sbt-site
 
 Libraries
 * [x] logback

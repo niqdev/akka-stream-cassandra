@@ -124,6 +124,19 @@ private[stream] class CassandraSource[K, C](keyspace: Keyspace,
 object CassandraSource {
   protected[stream] lazy val settings = Settings.Library
 
+  /**
+    * Create a Cassandra [[akka.stream.scaladsl.Source]] wrapping [[com.netflix.astyanax.recipes.reader.AllRowsReader]].
+    *
+    * @param keyspace       The [[com.netflix.astyanax.Keyspace]]
+    * @param columnFamily   The [[com.netflix.astyanax.model.ColumnFamily]]
+    * @param parallel       The parallelism
+    * @param pageSize       The page size
+    * @param queueSize      The queue size
+    * @param dequeueTimeout The dequeue timeout
+    * @tparam K key type K
+    * @tparam C column type C
+    * @return CassandraSource of [[com.netflix.astyanax.model.Row]]
+    */
   def apply[K, C](keyspace: Keyspace,
                   columnFamily: ColumnFamily[K, C],
                   parallel: Int = settings.parallel,

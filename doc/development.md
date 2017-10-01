@@ -39,6 +39,9 @@ sbt "whatDependsOn ch.qos.logback logback-classic 1.2.3"
 
 # show outdated dependencies
 sbt dependencyUpdates
+
+# generate, package and preview scaladoc
+sbt makeSite packageSite previewSite
 ```
 
 ### Documentation
