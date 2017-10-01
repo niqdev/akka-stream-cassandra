@@ -27,11 +27,12 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.Keep
 import akka.stream.testkit.scaladsl.TestSink
 import akka.testkit.{ImplicitSender, TestKit}
-import com.netflix.astyanax.model.ColumnFamily
+import com.netflix.astyanax.model.{ColumnFamily, Row}
 import com.netflix.astyanax.serializers.StringSerializer
 
 import scala.collection.JavaConverters.mapAsJavaMapConverter
 import scala.concurrent.ExecutionContext
+import scala.concurrent.duration.DurationInt
 
 final class CassandraSourceSpec
     extends TestKit(ActorSystem("test-actor-system"))
@@ -44,6 +45,8 @@ final class CassandraSourceSpec
   private[this] implicit val executionContext: ExecutionContext = system.dispatcher
 
   private[this] val defaultTtl = 9999
+  private[this] val emptyColumnFamily: ColumnFamily[String, String] =
+    new ColumnFamily[String, String]("empty", StringSerializer.get, StringSerializer.get)
   private[this] val columnFamily: ColumnFamily[String, String] =
     new ColumnFamily[String, String]("example", StringSerializer.get, StringSerializer.get)
 
@@ -60,8 +63,8 @@ final class CassandraSourceSpec
       .execute()
 
   private[this] def initCassandra = {
+    getKeyspace.createColumnFamily(emptyColumnFamily, Map.empty[String, AnyRef].asJava)
     getKeyspace.createColumnFamily(columnFamily, Map.empty[String, AnyRef].asJava)
-    columnFamily.describe(getKeyspace)
 
     insertRow("rowKey1", "column1", "value1")
     insertRow("rowKey1", "column2", "value2")
@@ -82,15 +85,34 @@ final class CassandraSourceSpec
 
   "CassandraSource" must {
 
-    "verify row keys" in {
-      val (_, subscriber) = CassandraSource(getKeyspace, columnFamily)
-        .map(_.getKey)
-        .toMat(TestSink.probe[String])(Keep.both)
+    "verify empty table" in {
+      val timeout = 1 // seconds
+      val (_, subscriber) = CassandraSource(getKeyspace, emptyColumnFamily, dequeueTimeout = timeout)
+        .toMat(TestSink.probe[Row[String, String]])(Keep.both)
         .run()
 
-      subscriber.request(3)
+      within((timeout + 1).seconds) {
+        subscriber.request(1)
+        subscriber.expectComplete()
+      }
+    }
 
+    "verify row keys" in {
+      val timeout = 2 // seconds
+      val (_, subscriber) =
+        CassandraSource(getKeyspace, columnFamily, pageSize = 1, queueSize = 1, dequeueTimeout = timeout)
+          .map(_.getKey)
+          .toMat(TestSink.probe[String])(Keep.both)
+          .run()
+
+      subscriber.request(3)
       subscriber.expectNextUnorderedN(Vector("rowKey1", "rowKey2", "rowKey3"))
+
+      within((timeout + 1).seconds) {
+        subscriber.request(1)
+        subscriber.expectComplete()
+      }
+
     }
 
   }

@@ -70,7 +70,12 @@ private[stream] class CassandraSource[K, C](keyspace: Keyspace,
 
       override def preStart(): Unit = {
         super.preStart()
-        log.debug("createLogic#preStart")
+        log.debug(s"""
+            |createLogic#preStart
+            |page size: $pageSize
+            |queue size: $queueSize
+            |dequeue timeout (seconds): $dequeueTimeout
+          """.stripMargin)
 
         // need to run in a different thread
         // otherwise put/poll from the queue will block each other
@@ -84,7 +89,7 @@ private[stream] class CassandraSource[K, C](keyspace: Keyspace,
               // dequeue from the head of the queue
               case Some(_) =>
                 push(out, input)
-              // null if the specified waiting time elapses before an element is available
+              // null if dequeue timeout elapses before an element is available
               case None =>
                 log.warning("closing source: empty queue")
                 complete(out)
@@ -111,14 +116,15 @@ private[stream] class CassandraSource[K, C](keyspace: Keyspace,
 }
 
 object CassandraSource {
+  // TODO move in conf
   protected[stream] val defaultPageSize = 1000
   protected[stream] val defaultQueueSize = 3000
-  protected[stream] val defaultPollingTimeout = 5 // seconds
+  protected[stream] val defaultDequeueTimeout = 5 // seconds
 
   def apply[K, C](keyspace: Keyspace,
                   columnFamily: ColumnFamily[K, C],
                   pageSize: Int = defaultPageSize,
                   queueSize: Int = defaultQueueSize,
-                  dequeueTimeout: Int = defaultPollingTimeout): Source[Row[K, C], NotUsed] =
+                  dequeueTimeout: Int = defaultDequeueTimeout): Source[Row[K, C], NotUsed] =
     Source.fromGraph(new CassandraSource(keyspace, columnFamily, pageSize, queueSize, dequeueTimeout))
 }
