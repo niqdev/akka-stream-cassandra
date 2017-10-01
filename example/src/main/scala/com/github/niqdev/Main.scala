@@ -30,10 +30,20 @@ import scala.concurrent.ExecutionContext
 object Main extends App {
   private[this] lazy val log = Logger(getClass.getSimpleName)
 
-  private[this] implicit val actorSystem: ActorSystem = ActorSystem("example-actor-system")
+  private[this] implicit val actorSystem: ActorSystem = ActorSystem("actor-system")
   private[this] implicit val materializer: ActorMaterializer = ActorMaterializer()
   private[this] implicit val executionContext: ExecutionContext = actorSystem.dispatcher
 
-  log.debug("TODO")
+  // @see example: lib/src/test/scala/com/github/niqdev/stream/CassandraSourceSpec.scala
+  /*
+  val keyspace: Keyspace = ...
+  val columnFamily: ColumnFamily[String, String] = ...
+
+  CassandraSource(keyspace, columnFamily)
+    .via(...)
+    .runForeach { row =>
+      log.debug(s"row: ${row.getKey}")
+    }
+  */
 
 }

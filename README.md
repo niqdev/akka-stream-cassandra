@@ -15,9 +15,9 @@
 [scaladoc-url]: https://goo.gl/X6e6M2
 
 Convenient [stream](https://doc.akka.io/docs/akka/2.5.6/scala/stream/index.html) based library
-for unsupported and no longer maintained versions of Cassandra and [DataStax Enterprise](http://docs.datastax.com/en/archived/cassandra/1.2/index.html).
+for unsupported and no longer maintained versions of Cassandra and [DataStax Enterprise](http://docs.datastax.com/en/archived/cassandra/1.2/index.html)
 
-Please prefer [alpakka](https://developer.lightbend.com/docs/alpakka/current/cassandra.html) Cassandra Connector for version 2 and above.
+Please prefer [alpakka](https://developer.lightbend.com/docs/alpakka/current/cassandra.html) Cassandra Connector for version 2 and above
 
 ### Setup
 
