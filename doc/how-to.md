@@ -105,30 +105,29 @@ sbt ghpagesPushSite
 # [error] fatal: Not a git repository (or any of the parent directories): .git
 rm -r ~/.sbt/ghpages/
 
-# add index.html with redirect
+# add index.html with redirect manually from GitHub
+# but you need to trigger a push once on gh-pages branch to make index.html visible
 touch lib/target/site/index.html
+git checkout gh-pages
+git commit -m "publish index.html" --allow-empty
  
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Project Documentation</title>
-    <script language="JavaScript">
-        <!--
+    <script type="text/javascript">
         function doRedirect()
         {
             window.location.replace("latest/api/com/github/niqdev/stream/index.html");
         }
-
         doRedirect();
-        //-->
     </script>
 </head>
-<body>
-<a href="latest/api">Go to the project documentation
-</a>
-</body>
+<body />
 </html>
 
-sbt ghpagesPushSite
+# publish manually
+# note that index.html is configured to be ignored
+sbt clean makeSite ghpagesPushSite
 ```

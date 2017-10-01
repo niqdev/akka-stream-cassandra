@@ -43,7 +43,7 @@ sbt dependencyUpdates
 # generate, package and preview scaladoc
 sbt makeSite packageSite previewSite
 
-# publish gh-pages
+# publish gh-pages (no travis)
 sbt clean makeSite ghpagesPushSite
 ```
 

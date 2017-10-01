@@ -3,6 +3,7 @@ import ch.epfl.scala.sbt.release.ReleaseEarlyPlugin.autoImport._
 import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport.scalafmtOnCompile
 import com.typesafe.sbt.SbtGit.git
 import com.typesafe.sbt.SbtPgp.autoImport._
+import com.typesafe.sbt.sbtghpages.GhpagesPlugin.autoImport._
 import sbt.Keys.{scmInfo, _}
 import sbt._
 import scoverage.ScoverageKeys._
@@ -36,7 +37,11 @@ object Settings {
     pgpSecretRing := file(".travis/local.secring.asc"),
     releaseEarlyWith := BintrayPublisher,
 
-    git.remoteRepo := scmInfo.value.get.connection
+    git.remoteRepo := scmInfo.value.get.connection,
+    excludeFilter in ghpagesCleanSite :=
+      new FileFilter {
+        def accept(f: File) = (ghpagesRepository.value / "index.html").getCanonicalPath == f.getCanonicalPath
+      }
   )
 
   lazy val exampleSettings = commonSettings ++ Seq(

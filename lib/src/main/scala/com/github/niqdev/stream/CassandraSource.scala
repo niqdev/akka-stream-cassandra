@@ -125,7 +125,7 @@ object CassandraSource {
   protected[stream] lazy val settings = Settings.Library
 
   /**
-    * Create a Cassandra [[akka.stream.scaladsl.Source]] wrapping [[com.netflix.astyanax.recipes.reader.AllRowsReader]].
+    * Creates a Cassandra [[akka.stream.scaladsl.Source]] wrapping [[com.netflix.astyanax.recipes.reader.AllRowsReader]].
     *
     * @param keyspace       The [[com.netflix.astyanax.Keyspace]]
     * @param columnFamily   The [[com.netflix.astyanax.model.ColumnFamily]]
