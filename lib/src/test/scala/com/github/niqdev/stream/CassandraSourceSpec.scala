@@ -86,21 +86,19 @@ final class CassandraSourceSpec
   "CassandraSource" must {
 
     "verify empty table" in {
-      val timeout = 1 // seconds
-      val (_, subscriber) = CassandraSource(getKeyspace, emptyColumnFamily, dequeueTimeout = timeout)
+      val (_, subscriber) = CassandraSource(getKeyspace, emptyColumnFamily)
         .toMat(TestSink.probe[Row[String, String]])(Keep.both)
         .run()
 
-      within((timeout + 1).seconds) {
+      within((CassandraSource.settings.dequeueTimeout + 1).seconds) {
         subscriber.request(1)
         subscriber.expectComplete()
       }
     }
 
     "verify row keys" in {
-      val timeout = 2 // seconds
       val (_, subscriber) =
-        CassandraSource(getKeyspace, columnFamily, parallel = 1, pageSize = 1, queueSize = 1, dequeueTimeout = timeout)
+        CassandraSource(getKeyspace, columnFamily)
           .map(_.getKey)
           .toMat(TestSink.probe[String])(Keep.both)
           .run()
@@ -108,11 +106,10 @@ final class CassandraSourceSpec
       subscriber.request(3)
       subscriber.expectNextUnorderedN(Vector("rowKey1", "rowKey2", "rowKey3"))
 
-      within((timeout + 1).seconds) {
+      within((CassandraSource.settings.dequeueTimeout + 1).seconds) {
         subscriber.request(1)
         subscriber.expectComplete()
       }
-
     }
 
   }

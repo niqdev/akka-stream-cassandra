@@ -30,11 +30,11 @@ final class SettingsSpec extends BaseSpec {
       Settings.Application.name shouldBe "akka-stream-cassandra"
     }
 
-    "verify default library configuration" in {
-      Settings.Library.parallel shouldBe 12
-      Settings.Library.pageSize shouldBe 1000
-      Settings.Library.queueSize shouldBe 3000
-      Settings.Library.dequeueTimeout shouldBe 5
+    "verify default configurations are overridden" in {
+      Settings.Library.parallel shouldBe 1
+      Settings.Library.pageSize shouldBe 1
+      Settings.Library.queueSize shouldBe 1
+      Settings.Library.dequeueTimeout shouldBe 1
     }
 
   }

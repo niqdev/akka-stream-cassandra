@@ -122,7 +122,7 @@ private[stream] class CassandraSource[K, C](keyspace: Keyspace,
 }
 
 object CassandraSource {
-  private[this] val settings = Settings.Library
+  protected[stream] lazy val settings = Settings.Library
 
   def apply[K, C](keyspace: Keyspace,
                   columnFamily: ColumnFamily[K, C],
