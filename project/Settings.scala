@@ -1,8 +1,9 @@
 import Dependencies._
 import ch.epfl.scala.sbt.release.ReleaseEarlyPlugin.autoImport._
 import com.lucidchart.sbt.scalafmt.ScalafmtCorePlugin.autoImport.scalafmtOnCompile
+import com.typesafe.sbt.SbtGit.git
 import com.typesafe.sbt.SbtPgp.autoImport._
-import sbt.Keys._
+import sbt.Keys.{scmInfo, _}
 import sbt._
 import scoverage.ScoverageKeys._
 
@@ -30,10 +31,12 @@ object Settings {
     scmInfo := Some(
       ScmInfo(url(s"https://github.com/niqdev/akka-stream-cassandra"),
         "scm:git:git@github.com:niqdev/akka-stream-cassandra.git")),
-    developers := List(Developer("niqdev", "niqdev", "niqdev@gmail.com", url("https://github.com/niqdev/akka-stream-cassandra"))),
+    developers := List(Developer("niqdev", "niqdev", "niqdev@gmail.com", url("https://github.com/niqdev"))),
     pgpPublicRing := file(".travis/local.pubring.asc"),
     pgpSecretRing := file(".travis/local.secring.asc"),
-    releaseEarlyWith := BintrayPublisher
+    releaseEarlyWith := BintrayPublisher,
+
+    git.remoteRepo := scmInfo.value.get.connection
   )
 
   lazy val exampleSettings = commonSettings ++ Seq(

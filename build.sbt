@@ -2,7 +2,7 @@ import Settings._
 
 lazy val lib = project.in(file("lib"))
   .settings(libSettings)
-  .enablePlugins(AutomateHeaderPlugin, SiteScaladocPlugin)
+  .enablePlugins(AutomateHeaderPlugin, SiteScaladocPlugin, GhpagesPlugin)
 
 lazy val example = project.in(file("example"))
   .settings(exampleSettings)

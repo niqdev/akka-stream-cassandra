@@ -84,3 +84,51 @@ travis login
 # encrypt Token
 travis encrypt 'COVERALLS_REPO_TOKEN=XXX' --add
 ```
+
+## scaladoc on GitHub
+
+* [sbt-site](http://www.scala-sbt.org/sbt-site/publishing.html)
+
+```
+# init gh-pages branch
+sbt clean makeSite
+origin=$(git remote get-url origin)
+cd lib/target/site
+git init
+git add .
+git commit -m "Initial import of GitHub Pages"
+git push --force "$origin" master:gh-pages
+
+# publish gh-pages
+sbt ghpagesPushSite
+# cache issue
+# [error] fatal: Not a git repository (or any of the parent directories): .git
+rm -r ~/.sbt/ghpages/
+
+# add index.html with redirect
+touch lib/target/site/index.html
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Project Documentation</title>
+    <script language="JavaScript">
+        <!--
+        function doRedirect()
+        {
+            window.location.replace("latest/api/com/github/niqdev/stream/index.html");
+        }
+
+        doRedirect();
+        //-->
+    </script>
+</head>
+<body>
+<a href="latest/api">Go to the project documentation
+</a>
+</body>
+</html>
+
+sbt ghpagesPushSite
+```

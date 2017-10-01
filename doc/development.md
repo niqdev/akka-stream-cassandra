@@ -42,6 +42,9 @@ sbt dependencyUpdates
 
 # generate, package and preview scaladoc
 sbt makeSite packageSite previewSite
+
+# publish gh-pages
+sbt clean makeSite ghpagesPushSite
 ```
 
 ### Documentation
