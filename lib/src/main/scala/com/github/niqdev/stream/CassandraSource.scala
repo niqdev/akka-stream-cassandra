@@ -116,6 +116,7 @@ private[stream] class CassandraSource[K, C](keyspace: Keyspace,
       override def postStop(): Unit = {
         super.postStop()
         log.debug("createLogic#postStop")
+        astyanaxExecutor.shutdown()
       }
 
     }
