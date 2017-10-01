@@ -5,6 +5,9 @@
 sbt example/run
 sbt "example/run-main com.github.niqdev.Main"
 
+# debug test (remote)
+sbt clean test -jvm-debug 5005
+
 # hot reload
 sbt ~re-start
 

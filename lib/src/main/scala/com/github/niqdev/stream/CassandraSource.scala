@@ -37,6 +37,7 @@ import scala.util.{Failure, Success, Try}
 
 private[stream] class CassandraSource[K, C](keyspace: Keyspace,
                                             columnFamily: ColumnFamily[K, C],
+                                            parallel: Int,
                                             pageSize: Int,
                                             queueSize: Int,
                                             dequeueTimeout: Int)
@@ -44,6 +45,8 @@ private[stream] class CassandraSource[K, C](keyspace: Keyspace,
 
   private[this] implicit val executionContext: ExecutionContext =
     ExecutionContext.fromExecutor(Executors.newSingleThreadExecutor())
+
+  private[this] val astyanaxExecutor = Executors.newFixedThreadPool(parallel)
 
   val out: Outlet[Row[K, C]] = Outlet[Row[K, C]]("CassandraSource.out")
 
@@ -57,6 +60,8 @@ private[stream] class CassandraSource[K, C](keyspace: Keyspace,
 
       def fullScanTable =
         new AllRowsReader.Builder[K, C](keyspace, columnFamily)
+          .withExecutor(astyanaxExecutor)
+          .withConcurrencyLevel(parallel)
           .withPageSize(pageSize)
           .forEachRow(new com.google.common.base.Function[Row[K, C], java.lang.Boolean] {
             override def apply(input: Row[K, C]) = {
@@ -117,14 +122,16 @@ private[stream] class CassandraSource[K, C](keyspace: Keyspace,
 
 object CassandraSource {
   // TODO move in conf
+  protected[stream] val defaultParallel = 12
   protected[stream] val defaultPageSize = 1000
   protected[stream] val defaultQueueSize = 3000
   protected[stream] val defaultDequeueTimeout = 5 // seconds
 
   def apply[K, C](keyspace: Keyspace,
                   columnFamily: ColumnFamily[K, C],
+                  parallel: Int = defaultParallel,
                   pageSize: Int = defaultPageSize,
                   queueSize: Int = defaultQueueSize,
                   dequeueTimeout: Int = defaultDequeueTimeout): Source[Row[K, C], NotUsed] =
-    Source.fromGraph(new CassandraSource(keyspace, columnFamily, pageSize, queueSize, dequeueTimeout))
+    Source.fromGraph(new CassandraSource(keyspace, columnFamily, parallel, pageSize, queueSize, dequeueTimeout))
 }

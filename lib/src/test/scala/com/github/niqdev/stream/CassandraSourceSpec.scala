@@ -85,6 +85,13 @@ final class CassandraSourceSpec
 
   "CassandraSource" must {
 
+    "verify default configuration" in {
+      CassandraSource.defaultParallel shouldBe 12
+      CassandraSource.defaultPageSize shouldBe 1000
+      CassandraSource.defaultQueueSize shouldBe 3000
+      CassandraSource.defaultDequeueTimeout shouldBe 5
+    }
+
     "verify empty table" in {
       val timeout = 1 // seconds
       val (_, subscriber) = CassandraSource(getKeyspace, emptyColumnFamily, dequeueTimeout = timeout)
@@ -100,7 +107,7 @@ final class CassandraSourceSpec
     "verify row keys" in {
       val timeout = 2 // seconds
       val (_, subscriber) =
-        CassandraSource(getKeyspace, columnFamily, pageSize = 1, queueSize = 1, dequeueTimeout = timeout)
+        CassandraSource(getKeyspace, columnFamily, parallel = 1, pageSize = 1, queueSize = 1, dequeueTimeout = timeout)
           .map(_.getKey)
           .toMat(TestSink.probe[String])(Keep.both)
           .run()
