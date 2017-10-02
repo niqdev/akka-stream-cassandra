@@ -27,6 +27,8 @@ resolvers += Resolver.jcenterRepo
 
 libraryDependencies ++= Seq(
   "com.github.niqdev" %% "akka-stream-cassandra" % "0.6.1"
+    // you might prefer to use a different version
+    exclude("com.netflix.astyanax", "astyanax")
 )
 ```
 
