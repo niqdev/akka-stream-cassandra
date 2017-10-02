@@ -42,10 +42,8 @@ private[stream] class CassandraSource[K, C](keyspace: Keyspace,
                                             pageSize: Int,
                                             queueSize: Int,
                                             dequeueTimeout: Int)
+                                           (implicit executionContext: ExecutionContext)
     extends GraphStage[SourceShape[Row[K, C]]] {
-
-  private[this] implicit val executionContext: ExecutionContext =
-    ExecutionContext.fromExecutor(Executors.newSingleThreadExecutor())
 
   private[this] val astyanaxExecutor = Executors.newFixedThreadPool(parallel)
 
@@ -134,6 +132,7 @@ object CassandraSource {
     * @param pageSize       The page size
     * @param queueSize      The queue size
     * @param dequeueTimeout The dequeue timeout
+    * @param executionContext The [[ExecutionContext]]
     * @tparam K key type K
     * @tparam C column type C
     * @return CassandraSource of [[com.netflix.astyanax.model.Row]]
@@ -143,6 +142,7 @@ object CassandraSource {
                   parallel: Int = settings.parallel,
                   pageSize: Int = settings.pageSize,
                   queueSize: Int = settings.queueSize,
-                  dequeueTimeout: Int = settings.dequeueTimeout): Source[Row[K, C], NotUsed] =
+                  dequeueTimeout: Int = settings.dequeueTimeout)
+                 (implicit executionContext: ExecutionContext): Source[Row[K, C], NotUsed] =
     Source.fromGraph(new CassandraSource(keyspace, columnFamily, parallel, pageSize, queueSize, dequeueTimeout))
 }
