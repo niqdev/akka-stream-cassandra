@@ -41,8 +41,7 @@ private[stream] class CassandraSource[K, C](keyspace: Keyspace,
                                             parallel: Int,
                                             pageSize: Int,
                                             queueSize: Int,
-                                            dequeueTimeout: Int)
-                                           (implicit executionContext: ExecutionContext)
+                                            dequeueTimeout: Int)(implicit executionContext: ExecutionContext)
     extends GraphStage[SourceShape[Row[K, C]]] {
 
   private[this] val astyanaxExecutor = Executors.newFixedThreadPool(parallel)
@@ -142,7 +141,7 @@ object CassandraSource {
                   parallel: Int = settings.parallel,
                   pageSize: Int = settings.pageSize,
                   queueSize: Int = settings.queueSize,
-                  dequeueTimeout: Int = settings.dequeueTimeout)
-                 (implicit executionContext: ExecutionContext): Source[Row[K, C], NotUsed] =
+                  dequeueTimeout: Int = settings.dequeueTimeout)(
+      implicit executionContext: ExecutionContext): Source[Row[K, C], NotUsed] =
     Source.fromGraph(new CassandraSource(keyspace, columnFamily, parallel, pageSize, queueSize, dequeueTimeout))
 }
