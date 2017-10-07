@@ -18,7 +18,13 @@ object Settings {
     startYear := Some(2017),
     licenses := Seq("MIT" -> url("https://github.com/niqdev/akka-stream-cassandra/blob/master/LICENSE")),
 
-    scalafmtOnCompile in Compile := true
+    scalafmtOnCompile in Compile := true,
+
+    mappings in(Compile, packageBin) ~= {
+      _.filterNot {
+        case (filePath, pathInJar) => pathInJar.endsWith("logback.xml")
+      }
+    }
   )
 
   lazy val libSettings = commonSettings ++ Seq(

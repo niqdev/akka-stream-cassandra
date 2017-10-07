@@ -7,6 +7,7 @@ sbt "example/run-main com.github.niqdev.Main"
 
 # debug test (remote)
 sbt clean test -jvm-debug 5005
+sbt -Dlogback.configurationFile=logback.xml clean test
 
 # run single test
 sbt "test:test-only *SettingsSpec"
@@ -45,6 +46,10 @@ sbt makeSite packageSite previewSite
 
 # publish gh-pages (no travis)
 sbt clean makeSite ghpagesPushSite
+
+# package jar in lib/target/scala-2.12/akka-stream-cassandra_2.12-X.Y.Z.jar
+sbt clean package
+unzip lib/target/scala-2.12/akka-stream-cassandra_2.12-* -d lib/target/scala-2.12/akka-stream-cassandra
 ```
 
 ### Documentation
