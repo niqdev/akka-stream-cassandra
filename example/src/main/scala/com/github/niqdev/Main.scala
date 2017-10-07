@@ -34,7 +34,7 @@ object Main extends App {
   private[this] implicit val materializer: ActorMaterializer = ActorMaterializer()
   private[this] implicit val executionContext: ExecutionContext = actorSystem.dispatcher
 
-  // @see example: lib/src/test/scala/com/github/niqdev/stream/CassandraSourceSpec.scala
+  log.debug("@see lib/src/test/scala/com/github/niqdev/stream/CassandraSourceSpec.scala")
   /*
   val keyspace: Keyspace = ...
   val columnFamily: ColumnFamily[String, String] = ...
