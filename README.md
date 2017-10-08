@@ -15,7 +15,7 @@
 [scaladoc-url]: https://niqdev.github.io/akka-stream-cassandra
 
 [Akka Stream](https://doc.akka.io/docs/akka/2.5.6/scala/stream/index.html) based library
-for unsupported and no longer maintained versions of Cassandra and [DataStax Enterprise](http://docs.datastax.com/en/archived/cassandra/1.2/index.html) powered by with [Netflix Astyanax](https://github.com/Netflix/astyanax)
+for unsupported and no longer maintained versions of Cassandra and [DataStax Enterprise](http://docs.datastax.com/en/archived/cassandra/1.2/index.html) powered by [Netflix Astyanax](https://github.com/Netflix/astyanax)
 
 Please prefer [alpakka](https://developer.lightbend.com/docs/alpakka/current/cassandra.html) Cassandra Connector for version 2 and above
 
