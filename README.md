@@ -12,10 +12,10 @@
 [bintray-image]: https://api.bintray.com/packages/niqdev/maven/akka-stream-cassandra/images/download.svg
 [bintray-url]: https://bintray.com/niqdev/maven/akka-stream-cassandra/_latestVersion
 [scaladoc-image]: https://img.shields.io/badge/scaladoc-online-orange.svg
-[scaladoc-url]: https://goo.gl/X6e6M2
+[scaladoc-url]: https://niqdev.github.io/akka-stream-cassandra
 
-Convenient [stream](https://doc.akka.io/docs/akka/2.5.6/scala/stream/index.html) based library
-for unsupported and no longer maintained versions of Cassandra and [DataStax Enterprise](http://docs.datastax.com/en/archived/cassandra/1.2/index.html)
+[Akka Stream](https://doc.akka.io/docs/akka/2.5.6/scala/stream/index.html) based library
+for unsupported and no longer maintained versions of Cassandra and [DataStax Enterprise](http://docs.datastax.com/en/archived/cassandra/1.2/index.html) powered by with [Netflix Astyanax](https://github.com/Netflix/astyanax)
 
 Please prefer [alpakka](https://developer.lightbend.com/docs/alpakka/current/cassandra.html) Cassandra Connector for version 2 and above
 
