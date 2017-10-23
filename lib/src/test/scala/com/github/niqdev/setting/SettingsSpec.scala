@@ -31,7 +31,7 @@ final class SettingsSpec extends BaseSpec {
     }
 
     "verify default configurations are overridden" in {
-      Settings.Library.parallel shouldBe 1
+      Settings.Library.parallelism shouldBe 1
       Settings.Library.pageSize shouldBe 1
       Settings.Library.queueSize shouldBe 1
       Settings.Library.dequeueTimeout shouldBe 1

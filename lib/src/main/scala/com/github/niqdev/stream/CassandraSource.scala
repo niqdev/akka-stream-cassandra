@@ -38,13 +38,13 @@ import scala.util.{Failure, Success, Try}
 
 private[stream] class CassandraSource[K, C](keyspace: Keyspace,
                                             columnFamily: ColumnFamily[K, C],
-                                            parallel: Int,
+                                            parallelism: Int,
                                             pageSize: Int,
                                             queueSize: Int,
                                             dequeueTimeout: Int)(implicit executionContext: ExecutionContext)
     extends GraphStage[SourceShape[Row[K, C]]] {
 
-  private[this] val astyanaxExecutor = Executors.newFixedThreadPool(parallel)
+  private[this] val astyanaxExecutor = Executors.newFixedThreadPool(parallelism)
 
   val out: Outlet[Row[K, C]] = Outlet[Row[K, C]]("CassandraSource.out")
 
@@ -53,13 +53,13 @@ private[stream] class CassandraSource[K, C](keyspace: Keyspace,
   override def createLogic(inheritedAttributes: Attributes): GraphStageLogic =
     new GraphStageLogic(shape) with StageLogging {
 
-      // thread-safe concurrent FIFO
+      // bounded thread-safe concurrent FIFO to provide back-pressure automatically
       val queue = new LinkedBlockingQueue[Row[K, C]](queueSize)
 
       def fullScanTable =
         new AllRowsReader.Builder[K, C](keyspace, columnFamily)
           .withExecutor(astyanaxExecutor)
-          .withConcurrencyLevel(parallel)
+          .withConcurrencyLevel(parallelism)
           .withPageSize(pageSize)
           .forEachRow(new com.google.common.base.Function[Row[K, C], java.lang.Boolean] {
             override def apply(input: Row[K, C]) = {
@@ -75,6 +75,9 @@ private[stream] class CassandraSource[K, C](keyspace: Keyspace,
         super.preStart()
         log.debug(s"""
              |createLogic#preStart
+             |keyspace name: ${keyspace.getKeyspaceName}
+             |column family name: ${columnFamily.getName}
+             |parallelism: $parallelism
              |page size: $pageSize
              |queue size: $queueSize
              |dequeue timeout (seconds): $dequeueTimeout
@@ -87,16 +90,13 @@ private[stream] class CassandraSource[K, C](keyspace: Keyspace,
 
       def pushInput: Unit =
         Try(queue.poll(dequeueTimeout, TimeUnit.SECONDS)) match {
-          case Success(input) =>
-            Option(input) match {
-              // dequeue from the head of the queue
-              case Some(_) =>
-                push(out, input)
-              // null if dequeue timeout elapses before an element is available
-              case None =>
-                log.warning("closing source: empty queue")
-                complete(out)
-            }
+          // dequeue from the head of the queue
+          case Success(input) if Option(input).isDefined =>
+            push(out, input)
+          // null if dequeue timeout elapses before an element is available
+          case Success(_) =>
+            log.warning("closing source: empty queue")
+            complete(out)
           case Failure(e: InterruptedException) =>
             log.error(e, s"restart polling: interrupted while waiting $e")
             // TODO exponential backoff ?
@@ -125,12 +125,12 @@ object CassandraSource {
   /**
     * Creates a Cassandra [[akka.stream.scaladsl.Source]] wrapping [[com.netflix.astyanax.recipes.reader.AllRowsReader]].
     *
-    * @param keyspace       The [[com.netflix.astyanax.Keyspace]]
-    * @param columnFamily   The [[com.netflix.astyanax.model.ColumnFamily]]
-    * @param parallel       The parallelism
-    * @param pageSize       The page size
-    * @param queueSize      The queue size
-    * @param dequeueTimeout The dequeue timeout
+    * @param keyspace         The [[com.netflix.astyanax.Keyspace]]
+    * @param columnFamily     The [[com.netflix.astyanax.model.ColumnFamily]]
+    * @param parallelism      The parallelism
+    * @param pageSize         The page size
+    * @param queueSize        The queue size
+    * @param dequeueTimeout   The dequeue timeout
     * @param executionContext The [[ExecutionContext]]
     * @tparam K key type K
     * @tparam C column type C
@@ -138,10 +138,10 @@ object CassandraSource {
     */
   def apply[K, C](keyspace: Keyspace,
                   columnFamily: ColumnFamily[K, C],
-                  parallel: Int = settings.parallel,
+                  parallelism: Int = settings.parallelism,
                   pageSize: Int = settings.pageSize,
                   queueSize: Int = settings.queueSize,
                   dequeueTimeout: Int = settings.dequeueTimeout)(
       implicit executionContext: ExecutionContext): Source[Row[K, C], NotUsed] =
-    Source.fromGraph(new CassandraSource(keyspace, columnFamily, parallel, pageSize, queueSize, dequeueTimeout))
+    Source.fromGraph(new CassandraSource(keyspace, columnFamily, parallelism, pageSize, queueSize, dequeueTimeout))
 }

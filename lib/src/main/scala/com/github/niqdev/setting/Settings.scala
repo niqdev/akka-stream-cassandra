@@ -36,7 +36,7 @@ object Settings {
   object Library {
     private[this] lazy val libConfig = config getConfig "akka-stream-cassandra"
 
-    val parallel: Int = libConfig getInt "parallel"
+    val parallelism: Int = libConfig getInt "parallelism"
     val pageSize: Int = libConfig getInt "page-size"
     val queueSize: Int = libConfig getInt "queue-size"
     val dequeueTimeout: Int = libConfig getInt "dequeue-timeout"

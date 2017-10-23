@@ -52,7 +52,7 @@ trait EmbeddedCassandraSupport { this: BaseSpec =>
     createKeyspace
   }
 
-  def createKeyspace = {
+  def createKeyspace: Unit = {
     val keyspaceContext = new AstyanaxContext.Builder()
       .forCluster("ClusterName")
       .forKeyspace("KeyspaceName")
