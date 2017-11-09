@@ -13,9 +13,9 @@ to
 *Why*
 
 - it's the latest version!
-- EOSL i.e. patches/bug fixes and support are not available
+- EOSL i.e. patches/bug fixes and support are not available anymore
 - get rid of DSE license fees
-- solve scaling issues e.g. vnodes
+- solve scaling issues (vnodes)
 - and more ...
 
 +++
@@ -32,7 +32,7 @@ to
 
 *Job*
 
-- standalone scala app
+- standalone Scala app
 - reads all rows from old C*
 - converts from old to new entity model
 - basic validation
@@ -52,7 +52,7 @@ Initial approach
 abstract class Migration(...) {
  val pageSize = 1000
  def rowFunction: com.google.common.base.Function
-                  [Row[String, String], java.lang.Boolean]
+                  [Row[String, String], Boolean]
  def migrate: Unit = {
   val astyanaxKeyspace: Keyspace = ???
   val columnFamily: ColumnFamily[String, String] = ???
@@ -73,11 +73,11 @@ abstract class Migration(...) {
 
 ```
 class Job(...) extends Migration(...) {
- override protected[job] def rowFunction = new RowFunction
+ override def rowFunction = new RowFunction
 }
 class RowFunction extends com.google.common.base.Function
-                          [Row[String, String], java.lang.Boolean] {
- override def apply(row: Row[String, String]): java.lang.Boolean = {
+                          [Row[String, String], Boolean] {
+ override def apply(row: Row[String, String]): Boolean = {
   // 1) convert Row to OldEntity
   // 2) convert OldEntity to NewEntity
   // 3) validate NewEntity
@@ -98,4 +98,36 @@ Issues
 - any step can fail: try/catch approach
 - hard to test
 - not reusable
-- low control: Thread.sleep :cold_sweat:
+- low control: sleep is blocking
+
+---
+
+A better approach
+
+**Akka Stream**
+
++++
+
+```
+class Job(...) extends BaseMigration(...) {
+ implicit val actorSystem: ActorSystem = ???
+ implicit val materializer: ActorMaterializer = ???
+ implicit val executionContext: ExecutionContext = ???
+ implicit val timeout: Timeout = ???
+
+ val monitorActor: ActorRef = ???
+ val entityActor: ActorRef = ???
+
+ override def migrate: Unit =
+  actorSystem.scheduler.scheduleOnce
+              (10.seconds, entityActor, EntityActor.Migrate)
+}
+```
+
+@[1, 10, 13]
+@[2-5, 7-8]
+@[10-12]
+
+---
+
+TODO
