@@ -25,7 +25,8 @@ to
 - lib for each entity to handle new C* version
 - wrap old and new C* libraries in facade
 - integrate facade in each service to manage read/write flags on both C*
-- substitute the facade with the new lib
+- run job to migrate from old to new C*
+- substitute the facade in the services with the new lib
 - drop tables in old C*
 
 ---
@@ -128,6 +129,45 @@ class Job(...) extends BaseMigration(...) {
 @[2-5, 7-8]
 @[10-12]
 
----
++++
 
-TODO
+```
+class EntityActor(monitorActor: ActorRef, ...)(implicit ...)
+  extends Actor with MigrationStream {
+ override def receive: Receive = {
+  case Migrate =>
+   CassandraSource(...)
+    .via(convertRowFlow)
+    .via(filterRowFlow(...))
+    .via(convertOldEntityFlow)
+    .via(skipInvalidOldEntityFlow)
+    .via(convertNewEntityFlow)
+    .via(storeNewEntityFlow)
+    .via(validateNewEntityFlow)
+    .via(monitorEventFlow(monitorActor))
+    .runWith(Sink.ignore)
+    .onComplete { ... }
+  }
+}
+```
+
+@[1-4, 16-17]
+@[5-15]
+
++++
+
+```
+package object stream {
+ type AstyanaxRow = Row[String, String]
+ type LeftMetadata = (Event, String)
+
+ sealed trait Event
+ case object SuccessEvent extends Event
+ case object WarningEvent extends Event
+ case object ErrorEvent extends Event
+}
+```
+
++++
+
+TODO CassandraSource
