@@ -26,7 +26,7 @@ to
 - wrap old and new C* libraries in facade
 - integrate facade in each service to manage read/write flags on both C*
 - run job to migrate from old to new C*
-- substitute the facade in the services with the new lib
+- substitute the facade with the new lib
 - drop tables in old C*
 
 ---
@@ -138,9 +138,7 @@ class EntityActor(monitorActor: ActorRef, ...)(implicit ...)
   case Migrate =>
    CassandraSource(...)
     .via(convertRowFlow)
-    .via(filterRowFlow(...))
     .via(convertOldEntityFlow)
-    .via(skipInvalidOldEntityFlow)
     .via(convertNewEntityFlow)
     .via(storeNewEntityFlow)
     .via(validateNewEntityFlow)
@@ -171,3 +169,60 @@ package object stream {
 +++
 
 TODO CassandraSource
+
++++
+
+```
+trait MigrationStream {
+ // ...
+ def convertNewEntity(oldEntity: OldEntity): Try[NewEntity] =
+  Try(NewEntityConverter.convert(oldEntity))
+ def convertNewEntityFlow[I, O](converter: I => Try[O]):
+   Flow[Either[LeftMetadata, I], Either[LeftMetadata, O], NotUsed] =
+  Flow[Either[LeftMetadata, I]] map {
+   case Right(entity) =>
+    converter(entity) match {
+     case Success(output) => Right(output)
+     case Failure(error) => Left(ErrorEvent, s"Error: $error")
+    }
+   case left => left
+  }
+}
+```
+
+@[1, 15]
+@[5-6]
+@[7-8, 13-14]
+@[3-4, 9-12]
+
++++
+
+TODO Monitor
+
++++
+
+TODO async
+
++++
+
+TODO Test
+
++++
+
+Benefits
+- any step can fail: `Either[LeftMetadata, T]` approach
+- simple to test with `akka-stream-testkit`
+- DRY: easy to abstract and reuse stream
+- use async + custom dispatcher to have fine grained tune
+
+---
+
+Resources
+
+TODO
+
+---
+
+Thanks!
+
+Any Questions?
