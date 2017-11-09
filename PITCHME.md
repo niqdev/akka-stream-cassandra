@@ -23,7 +23,7 @@ to
 *How*
 
 - lib for each entity to handle new C* version
-- facade to wrap old and new C* libraries
+- wrap old and new C* libraries in facade
 - integrate facade in each service to manage read/write flags on both C*
 - substitute the facade with the new lib
 - drop tables in old C*
@@ -42,33 +42,31 @@ to
 
 ---
 
-Java Style
+Initial approach
+**Java Style**
+
+---
 
 ```
 abstract class Migration(...) {
-  val pageSize = 1000
-  lazy val astyanaxClient = ???
-  lazy val datastaxClient = ???
+ val pageSize = 1000
 
-  // guava
-  def rowFunction: com.google.common.base.Function[Row[String, String], java.lang.Boolean]
+ def rowFunction: com.google.common.base.Function
+                  [Row[String, String], java.lang.Boolean]
 
-  def migrate: Unit = {
-    val astyanaxKeyspace: Keyspace = ???
-    val columnFamily: ColumnFamily[String, String] = ???
-
-    // ...
-    
-    new AllRowsReader.Builder[String, String](astyanaxKeyspace, columnFamily)
-      .withPageSize(pageSize)
-      .forEachRow(rowFunction)
-      .build()
-      .call()
-    
-    // ...
-  }
+ def migrate: Unit = {
+  val astyanaxKeyspace: Keyspace = ???
+  val columnFamily: ColumnFamily[String, String] = ???
+  
+  new AllRowsReader.Builder[String, String]
+                           (astyanaxKeyspace, columnFamily)
+   .withPageSize(pageSize)
+   .forEachRow(rowFunction)
+   .build()
+   .call()
+ }
 }
 ```
 
-@[1, 9, 22-23]
-@[6-7, 15-19]
+@[1, 7, 17-18]
+@[4-5, 11-16]
