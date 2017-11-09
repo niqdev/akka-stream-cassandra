@@ -43,21 +43,19 @@ to
 ---
 
 Initial approach
+
 **Java Style**
 
----
++++
 
 ```
 abstract class Migration(...) {
  val pageSize = 1000
-
  def rowFunction: com.google.common.base.Function
                   [Row[String, String], java.lang.Boolean]
-
  def migrate: Unit = {
   val astyanaxKeyspace: Keyspace = ???
   val columnFamily: ColumnFamily[String, String] = ???
-  
   new AllRowsReader.Builder[String, String]
                            (astyanaxKeyspace, columnFamily)
    .withPageSize(pageSize)
