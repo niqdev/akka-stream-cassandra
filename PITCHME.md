@@ -22,15 +22,11 @@ to
 
 *How?*
 
-| Step | Old C *Read* | Old C *Write* | New C *Read* | New C *Insert* | New C *Update* | Job |
-
-| 1 | **ON** | **ON** | OFF | OFF | OFF | BEFORE |
-| 2 | ON | ON | OFF | OFF | **ON** | BEFORE |
-| 3 | ON | ON | OFF | **ON** | ON | BEFORE |
-| 4 | ON | ON | OFF | ON | ON | **RUN** |
-| 5 | ON | ON | **ON** | ON | ON | AFTER |
-| 6 | **OFF** | ON | ON | ON | ON | AFTER |
-| 7 | OFF | **OFF** | ON | ON | ON | AFTER |
+- lib for each entity to handle new C* version
+- facade to wrap old and new C* libraries
+- integrate facade in each service to manage read/write flags on both C*
+- substitute the facade with the new lib
+- drop tables in old C*
 
 ---
 
