@@ -109,6 +109,8 @@ A better approach
 
 +++
 
+Main
+
 ```
 class Job(...) extends BaseMigration(...) {
  implicit val actorSystem: ActorSystem = ???
@@ -130,6 +132,8 @@ class Job(...) extends BaseMigration(...) {
 @[10-12]
 
 +++
+
+Actor
 
 ```
 class EntityActor(monitorActor: ActorRef, ...)(implicit ...)
@@ -154,6 +158,8 @@ class EntityActor(monitorActor: ActorRef, ...)(implicit ...)
 
 +++
 
+Package
+
 ```
 package object stream {
  type AstyanaxRow = Row[String, String]
@@ -168,8 +174,9 @@ package object stream {
 
 +++
 
-CassandraSource (part 1)
+Source (part 1)
 
+```
 class CassandraSource[K, C](...)(implicit ...)
   extends GraphStage[SourceShape[Row[K, C]]] {
  override def createLogic(inheritedAttributes: Attributes) =
@@ -187,12 +194,16 @@ class CassandraSource[K, C](...)(implicit ...)
       })
       // ...
 }}}}
+```
+
+@[1-4, 6, 17]
+@[5, 7-16]
 
 +++
 
+Source (part 2)
 
-CassandraSource (part 2)
-
+```
 class CassandraSource[K, C](...)(implicit ...)
   extends GraphStage[SourceShape[Row[K, C]]] {
  override def createLogic(inheritedAttributes: Attributes) =
@@ -206,33 +217,17 @@ class CassandraSource[K, C](...)(implicit ...)
        push(out, input)
       case Failure(e) =>
        complete(out)
+      // ...
      }})
 }}
+```
 
-# slide
-Akka Stream (part 5): Flow
-
-trait MigrationStream {
-
-    // wrap Java converter
-    def convertNewEntity(oldEntity: OldEntity): Try[NewEntity] =
-        Try(NewEntityConverter.convert(oldEntity))
-
-    def convertNewEntityFlow[I, O](converter: I => Try[O]):
-      Flow[Either[LeftMetadata, I], Either[LeftMetadata, O], NotUsed] =
-        Flow[Either[LeftMetadata, I]] map {
-        case Right(entity) =>
-          converter(entity) match {
-            case Success(output) =>
-              Right(output)
-            case Failure(error) =>
-              Left(ErrorEvent, s"[convertNewEntityFlow] unable to convert entity [entityRef=${entity.getRef}]: $error")
-            }
-        case left => left
-      }
-}
+@[1-4, 7-8, 15-16]
+@[5, 9-15]
 
 +++
+
+Flow
 
 ```
 trait MigrationStream {
