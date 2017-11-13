@@ -168,7 +168,69 @@ package object stream {
 
 +++
 
-TODO CassandraSource
+CassandraSource (part 1)
+
+class CassandraSource[K, C](...)(implicit ...)
+  extends GraphStage[SourceShape[Row[K, C]]] {
+ override def createLogic(inheritedAttributes: Attributes) =
+  new GraphStageLogic(shape) {
+   val queue = new LinkedBlockingQueue[Row[K, C]](queueSize)
+   override def preStart(): Unit = Future {
+    new AllRowsReader.Builder[K, C](keyspace, columnFamily)
+      .withPageSize(pageSize)
+      .forEachRow(new com.google.common.base.Function
+                      [Row[K, C], java.lang.Boolean] {
+        override def apply(input: Row[K, C]) = {
+         queue.put(input)
+         true
+        }
+      })
+      // ...
+}}}}
+
++++
+
+
+CassandraSource (part 2)
+
+class CassandraSource[K, C](...)(implicit ...)
+  extends GraphStage[SourceShape[Row[K, C]]] {
+ override def createLogic(inheritedAttributes: Attributes) =
+  new GraphStageLogic(shape) {
+   val queue = new LinkedBlockingQueue[Row[K, C]](queueSize)
+   // ...
+   setHandler(out, new OutHandler {
+    override def onPull(): Unit =
+     Try(queue.poll(dequeueTimeout, TimeUnit.SECONDS)) match {
+      case Success(input) if Option(input).isDefined =>
+       push(out, input)
+      case Failure(e) =>
+       complete(out)
+     }})
+}}
+
+# slide
+Akka Stream (part 5): Flow
+
+trait MigrationStream {
+
+    // wrap Java converter
+    def convertNewEntity(oldEntity: OldEntity): Try[NewEntity] =
+        Try(NewEntityConverter.convert(oldEntity))
+
+    def convertNewEntityFlow[I, O](converter: I => Try[O]):
+      Flow[Either[LeftMetadata, I], Either[LeftMetadata, O], NotUsed] =
+        Flow[Either[LeftMetadata, I]] map {
+        case Right(entity) =>
+          converter(entity) match {
+            case Success(output) =>
+              Right(output)
+            case Failure(error) =>
+              Left(ErrorEvent, s"[convertNewEntityFlow] unable to convert entity [entityRef=${entity.getRef}]: $error")
+            }
+        case left => left
+      }
+}
 
 +++
 
@@ -193,7 +255,7 @@ trait MigrationStream {
 @[1, 15]
 @[5-6]
 @[7-8, 13-14]
-@[3-4, 9-12]
+@[3-4, 9-12](converter: I => Try[O])
 
 +++
 
@@ -210,10 +272,11 @@ TODO Test
 +++
 
 Benefits
-- any step can fail: `Either[LeftMetadata, T]` approach
+- any step can fail: `Either[LeftMetadata, T]`
 - simple to test with `akka-stream-testkit`
-- DRY: easy to abstract and reuse stream
-- use async + custom dispatcher to have fine grained tune
+- DRY: easy to abstract and reuse streams
+- back-pressure
+- use `async` + custom `dispatcher`
 
 ---
 
@@ -223,6 +286,6 @@ TODO
 
 ---
 
-Thanks!
+## Thanks!
 
-Any Questions?
+### Any Questions?
