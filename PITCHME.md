@@ -70,8 +70,6 @@ abstract class Migration(...) {
 @[1, 5, 14-15]
 @[3-4, 8-13]
 
-Documentation: [astyanax](https://github.com/Netflix/astyanax)
-
 +++
 
 ```
@@ -132,8 +130,6 @@ class Job(...) extends BaseMigration(...) {
 @[1, 10, 13]
 @[2-5, 7-8]
 @[10-12]
-
-Documentation: [actor](https://doc.akka.io/docs/akka/current/scala/actors.html)
 
 +++
 
@@ -203,8 +199,6 @@ class CassandraSource[K, C](...)(implicit ...)
 @[1-4, 6, 17]
 @[5, 7-16]
 
-Documentation: [custom graph](https://doc.akka.io/docs/akka/current/scala/stream/stream-customize.html)
-
 +++
 
 Source (part 2)
@@ -258,8 +252,6 @@ trait MigrationStream {
 @[7-8, 13-14]
 @[3-4, 9-12](converter: I => Try[O])
 
-Documentation: [stream](https://doc.akka.io/docs/akka/current/scala/stream/stream-flows-and-basics.html)
-
 +++
 
 TODO Monitor (part 1)
@@ -282,8 +274,6 @@ def monitorEventFlow[E <: Entity](monitorActor: ActorRef)(implicit ...):
 }
 ```
 
-Documentation: [graph](https://doc.akka.io/docs/akka/current/scala/stream/stream-graphs.html)
-
 +++
 
 TODO Monitor (part 2)
@@ -305,7 +295,7 @@ def controlDynamicFlow: Flow[FlowControl, FlowControl, NotUsed] =
 
 +++
 
-TODO Parallelism
+Parallelism
 
 ```
 class EntityActor(monitorActor: ActorRef, ...)(implicit ...)
@@ -316,23 +306,25 @@ class EntityActor(monitorActor: ActorRef, ...)(implicit ...)
     .via(simple1AsyncFlow).async
     .via(simple1AsyncFlow).async
     .via(customExecutionContextFlow(...,
-      actorSystem.dispatchers.lookup("application.custom-dispatcher")).async
+      actorSystem.dispatchers
+                 .lookup("application.custom-dispatcher"))
+                 .async
     .runWith(...)
     .onComplete { ... }
   }
 }
 ```
 
-@[1-4, 12-13]
-@[5-9]
+@[1-4, 14-15]
+@[5-13]
 
-Documentation: [dispatcher](https://doc.akka.io/docs/akka/current/scala/dispatchers.html)
+[Dispatcher](https://doc.akka.io/docs/akka/current/scala/dispatchers.html) documentation
 
 +++
 
 `akka-stream-testkit`
 
-Documentation: [test](https://doc.akka.io/docs/akka/current/scala/stream/stream-testkit.html)
+[Documentation](https://doc.akka.io/docs/akka/current/scala/stream/stream-testkit.html)
 
 +++
 
@@ -343,6 +335,15 @@ Benefits
 - back-pressure
 - use `async` + custom `dispatcher`
 - it's fun!
+
+---
+
+Resources
+
+- [Astyanax](https://github.com/Netflix/astyanax)
+- [Datastax](http://docs.datastax.com/en/landing_page/doc/landing_page/docList.html)
+- [Akka](https://doc.akka.io/docs/akka/current/scala/index.html)
+- [akka-stream-cassandra](https://github.com/niqdev/akka-stream-cassandra)
 
 ---
 
