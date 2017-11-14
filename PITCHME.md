@@ -213,7 +213,6 @@ Package
 
 ```scala
 package object stream {
- type AstyanaxRow = Row[String, String]
  type LeftMetadata = (Event, String)
 
  sealed trait Event
@@ -256,8 +255,8 @@ Monitor (part 1)
 ```scala
 package object stream {
  sealed trait FlowControl
- case class Throttle(sleepMillis: Long) extends FlowControl
  case object Continue extends FlowControl
+ case class Throttle(sleepMillis: Long) extends FlowControl
 }
 trait MonitorStream {
  def controlDynamicFlow: Flow[FlowControl,FlowControl,NotUsed] =
