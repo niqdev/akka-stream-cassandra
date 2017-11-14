@@ -70,6 +70,8 @@ abstract class Migration(...) {
 @[1, 5, 14-15]
 @[3-4, 8-13]
 
+https://github.com/Netflix/astyanax
+
 +++
 
 ```
@@ -131,6 +133,8 @@ class Job(...) extends BaseMigration(...) {
 @[2-5, 7-8]
 @[10-12]
 
+https://doc.akka.io/docs/akka/current/scala/actors.html
+
 +++
 
 Actor
@@ -155,6 +159,8 @@ class EntityActor(monitorActor: ActorRef, ...)(implicit ...)
 
 @[1-4, 16-17]
 @[5-15]
+
+https://doc.akka.io/docs/akka/current/scala/actors.html
 
 +++
 
@@ -199,6 +205,8 @@ class CassandraSource[K, C](...)(implicit ...)
 @[1-4, 6, 17]
 @[5, 7-16]
 
+https://doc.akka.io/docs/akka/current/scala/stream/stream-customize.html
+
 +++
 
 Source (part 2)
@@ -224,6 +232,8 @@ class CassandraSource[K, C](...)(implicit ...)
 
 @[1-4, 7-8, 15-16]
 @[5, 9-15]
+
+https://doc.akka.io/docs/akka/current/scala/stream/stream-customize.html
 
 +++
 
@@ -252,17 +262,25 @@ trait MigrationStream {
 @[7-8, 13-14]
 @[3-4, 9-12](converter: I => Try[O])
 
+https://doc.akka.io/docs/akka/current/scala/stream/stream-flows-and-basics.html
+
 +++
 
 TODO Monitor
 
+https://doc.akka.io/docs/akka/current/scala/stream/stream-graphs.html
+
 +++
 
-TODO async
+TODO Parallelism
+
+https://doc.akka.io/docs/akka/current/scala/dispatchers.html
 
 +++
 
 TODO Test
+
+https://doc.akka.io/docs/akka/current/scala/stream/stream-testkit.html
 
 +++
 
