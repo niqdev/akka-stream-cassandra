@@ -160,8 +160,6 @@ class EntityActor(monitorActor: ActorRef, ...)(implicit ...)
 @[1-4, 16-17]
 @[5-15]
 
-https://doc.akka.io/docs/akka/current/scala/actors.html
-
 +++
 
 Package
@@ -233,8 +231,6 @@ class CassandraSource[K, C](...)(implicit ...)
 @[1-4, 7-8, 15-16]
 @[5, 9-15]
 
-https://doc.akka.io/docs/akka/current/scala/stream/stream-customize.html
-
 +++
 
 Flow
@@ -273,6 +269,25 @@ https://doc.akka.io/docs/akka/current/scala/stream/stream-graphs.html
 +++
 
 TODO Parallelism
+
+```
+class EntityActor(monitorActor: ActorRef, ...)(implicit ...)
+  extends Actor with MigrationStream {
+ override def receive: Receive = {
+  case Migrate =>
+   CassandraSource(...).async
+    .via(simple1AsyncFlow).async
+    .via(simple1AsyncFlow).async
+    .via(customExecutionContextFlow(...,
+      actorSystem.dispatchers.lookup("application.custom-dispatcher")).async
+    .runWith(...)
+    .onComplete { ... }
+  }
+}
+```
+
+@[1-4, 12-13]
+@[5-9]
 
 https://doc.akka.io/docs/akka/current/scala/dispatchers.html
 
