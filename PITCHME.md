@@ -4,7 +4,7 @@ with Akka Stream
 ---
 
 Migrate from
-### DSE 3.1.6 (Cassandra 1.2)
+### Cassandra 1.2 (DSE 3.1.6)
 to
 ### Cassandra 3.11
 
@@ -70,7 +70,7 @@ abstract class Migration(...) {
 @[1, 5, 14-15]
 @[3-4, 8-13]
 
-https://github.com/Netflix/astyanax
+Documentation: [astyanax](https://github.com/Netflix/astyanax)
 
 +++
 
@@ -133,7 +133,7 @@ class Job(...) extends BaseMigration(...) {
 @[2-5, 7-8]
 @[10-12]
 
-https://doc.akka.io/docs/akka/current/scala/actors.html
+Documentation: [actor](https://doc.akka.io/docs/akka/current/scala/actors.html)
 
 +++
 
@@ -203,7 +203,7 @@ class CassandraSource[K, C](...)(implicit ...)
 @[1-4, 6, 17]
 @[5, 7-16]
 
-https://doc.akka.io/docs/akka/current/scala/stream/stream-customize.html
+Documentation: [custom graph](https://doc.akka.io/docs/akka/current/scala/stream/stream-customize.html)
 
 +++
 
@@ -258,7 +258,7 @@ trait MigrationStream {
 @[7-8, 13-14]
 @[3-4, 9-12](converter: I => Try[O])
 
-https://doc.akka.io/docs/akka/current/scala/stream/stream-flows-and-basics.html
+Documentation: [stream](https://doc.akka.io/docs/akka/current/scala/stream/stream-flows-and-basics.html)
 
 +++
 
@@ -282,7 +282,7 @@ def monitorEventFlow[E <: Entity](monitorActor: ActorRef)(implicit ...):
 }
 ```
 
-https://doc.akka.io/docs/akka/current/scala/stream/stream-graphs.html
+Documentation: [graph](https://doc.akka.io/docs/akka/current/scala/stream/stream-graphs.html)
 
 +++
 
@@ -326,13 +326,13 @@ class EntityActor(monitorActor: ActorRef, ...)(implicit ...)
 @[1-4, 12-13]
 @[5-9]
 
-https://doc.akka.io/docs/akka/current/scala/dispatchers.html
+Documentation: [dispatcher](https://doc.akka.io/docs/akka/current/scala/dispatchers.html)
 
 +++
 
 `akka-stream-testkit`
 
-https://doc.akka.io/docs/akka/current/scala/stream/stream-testkit.html
+Documentation: [test](https://doc.akka.io/docs/akka/current/scala/stream/stream-testkit.html)
 
 +++
 
@@ -342,12 +342,7 @@ Benefits
 - DRY: easy to abstract and reuse streams
 - back-pressure
 - use `async` + custom `dispatcher`
-
----
-
-Resources
-
-TODO
+- it's fun!
 
 ---
 
