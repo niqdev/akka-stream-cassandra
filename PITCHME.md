@@ -262,9 +262,46 @@ https://doc.akka.io/docs/akka/current/scala/stream/stream-flows-and-basics.html
 
 +++
 
-TODO Monitor
+TODO Monitor (part 1)
+
+```
+def monitorEventFlow[E <: Entity](monitorActor: ActorRef)(implicit ...):
+ Flow[Either[LeftMetadata, E], Either[LeftMetadata, E], _] = Flow.fromGraph {
+  GraphDSL.create() { implicit builder => import GraphDSL.Implicits._
+
+   val broadcast = builder.add(Broadcast[Either[LeftMetadata, E]](2))
+   val zipper = builder.add(Zip[Either[LeftMetadata, E], FlowControl])
+   val outputFlow = builder.add(Flow[Either[LeftMetadata, E]])
+   
+   broadcast.out(0) ~> zipper.in0
+   broadcast.out(1) ~> entityToEventFlow ~> monitorEventActorFlow(monitorActor)
+                    ~> controlDynamicFlow ~> zipper.in1
+   zipper.out.map(_._1) ~> outputFlow.in
+   FlowShape(broadcast.in, outputFlow.out)
+  }
+}
+```
 
 https://doc.akka.io/docs/akka/current/scala/stream/stream-graphs.html
+
++++
+
+TODO Monitor (part 2)
+
+```
+package object stream {
+ sealed trait FlowControl
+ case class Throttle(sleepMillis: Long) extends FlowControl
+ case object Continue extends FlowControl
+} 
+def controlDynamicFlow: Flow[FlowControl, FlowControl, NotUsed] =
+ Flow[FlowControl] flatMapConcat {
+  case c@Continue =>
+   Source.single(c)
+  case t@Throttle(sleepMillis) =>
+   Source.single(t).delay(sleepMillis, DelayOverflowStrategy.backpressure)
+}
+```
 
 +++
 
@@ -293,7 +330,7 @@ https://doc.akka.io/docs/akka/current/scala/dispatchers.html
 
 +++
 
-TODO Test
+`akka-stream-testkit`
 
 https://doc.akka.io/docs/akka/current/scala/stream/stream-testkit.html
 
