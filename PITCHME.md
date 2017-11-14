@@ -176,7 +176,7 @@ package object stream {
 
 Source (part 1)
 
-```
+```scala
 class CassandraSource[K, C](...)(implicit ...)
   extends GraphStage[SourceShape[Row[K, C]]] {
  override def createLogic(inheritedAttributes: Attributes) =
@@ -191,19 +191,18 @@ class CassandraSource[K, C](...)(implicit ...)
          queue.put(input)
          true
         }
-      })
-      // ...
-}}}}
+      }).build().call()
+}}}
 ```
 
-@[1-4, 6, 17]
-@[5, 7-16]
+@[1-4, 6, 16]
+@[5, 7-15]
 
 +++
 
 Source (part 2)
 
-```
+```scala
 class CassandraSource[K, C](...)(implicit ...)
   extends GraphStage[SourceShape[Row[K, C]]] {
  override def createLogic(inheritedAttributes: Attributes) =
@@ -217,13 +216,12 @@ class CassandraSource[K, C](...)(implicit ...)
        push(out, input)
       case Failure(e) =>
        complete(out)
-      // ...
      }})
 }}
 ```
 
-@[1-4, 7-8, 15-16]
-@[5, 9-15]
+@[1-4, 7-8, 14-15]
+@[5, 9-14]
 
 +++
 
@@ -231,11 +229,10 @@ Flow
 
 ```
 trait MigrationStream {
- // ...
  def convertNewEntity(oldEntity: OldEntity): Try[NewEntity] =
   Try(NewEntityConverter.convert(oldEntity))
  def convertNewEntityFlow[I, O](converter: I => Try[O]):
-   Flow[Either[LeftMetadata, I], Either[LeftMetadata, O], NotUsed] =
+   Flow[Either[LeftMetadata,I],Either[LeftMetadata,O],NotUsed] =
   Flow[Either[LeftMetadata, I]] map {
    case Right(entity) =>
     converter(entity) match {
@@ -247,51 +244,62 @@ trait MigrationStream {
 }
 ```
 
-@[1, 15]
-@[5-6]
-@[7-8, 13-14]
-@[3-4, 9-12](converter: I => Try[O])
+@[1, 14]
+@[4-5]
+@[6-7, 12-13]
+@[2-3, 8-11]
 
 +++
 
-TODO Monitor (part 1)
-
-```
-def monitorEventFlow[E <: Entity](monitorActor: ActorRef)(implicit ...):
- Flow[Either[LeftMetadata, E], Either[LeftMetadata, E], _] = Flow.fromGraph {
-  GraphDSL.create() { implicit builder => import GraphDSL.Implicits._
-
-   val broadcast = builder.add(Broadcast[Either[LeftMetadata, E]](2))
-   val zipper = builder.add(Zip[Either[LeftMetadata, E], FlowControl])
-   val outputFlow = builder.add(Flow[Either[LeftMetadata, E]])
-   
-   broadcast.out(0) ~> zipper.in0
-   broadcast.out(1) ~> entityToEventFlow ~> monitorEventActorFlow(monitorActor)
-                    ~> controlDynamicFlow ~> zipper.in1
-   zipper.out.map(_._1) ~> outputFlow.in
-   FlowShape(broadcast.in, outputFlow.out)
-  }
-}
-```
-
 +++
 
-TODO Monitor (part 2)
+Monitor (part 1)
 
 ```
 package object stream {
  sealed trait FlowControl
  case class Throttle(sleepMillis: Long) extends FlowControl
  case object Continue extends FlowControl
-} 
-def controlDynamicFlow: Flow[FlowControl, FlowControl, NotUsed] =
- Flow[FlowControl] flatMapConcat {
-  case c@Continue =>
-   Source.single(c)
-  case t@Throttle(sleepMillis) =>
-   Source.single(t).delay(sleepMillis, DelayOverflowStrategy.backpressure)
+}
+trait MonitorStream {
+ def controlDynamicFlow: Flow[FlowControl, FlowControl, NotUsed] =
+  Flow[FlowControl] flatMapConcat {
+   case c@Continue =>
+    Source.single(c)
+   case t@Throttle(sleepMillis) =>
+    Source.single(t)
+          .delay(sleepMillis, DelayOverflowStrategy.backpressure)
+  }
 }
 ```
+
+@[1, 5]
+@[6-7, 15]
+@[8-14]
+
+Monitor (part 2)
+
+```
+def monitorEventFlow[E](monitorActor: ActorRef)(implicit ...):
+  Flow[Either[LeftMetadata, E], Either[LeftMetadata, E], _] =
+ Flow.fromGraph { GraphDSL.create() {
+   implicit b => import GraphDSL.Implicits._
+   val broadcast = b.add(Broadcast[Either[LeftMetadata, E]](2))
+   val zipper = b.add(Zip[Either[LeftMetadata, E], FlowControl])
+   val outputFlow = b.add(Flow[Either[LeftMetadata, E]])
+   broadcast.out(0) ~> zipper.in0
+   broadcast.out(1) ~> entityToEventFlow
+                    ~> monitorEventActorFlow(monitorActor)
+                    ~> controlDynamicFlow
+                    ~> zipper.in1
+   zipper.out.map(_._1) ~> outputFlow.in
+   FlowShape(broadcast.in, outputFlow.out)
+}}
+```
+
+@[1-3, 15]
+@[4-7, 14]
+@[8-13]
 
 +++
 
