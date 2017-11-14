@@ -311,7 +311,7 @@ class EntityActor(monitorActor: ActorRef, ...)(implicit ...)
   case Migrate =>
    CassandraSource(...).async
     .via(simpleAsyncFlow).async
-    .via(customExecutionContextFlow(
+    .via(customAsyncFlow(
       actorSystem.dispatchers
                  .lookup("application.custom-dispatcher"))
                  .async
