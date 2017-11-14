@@ -271,11 +271,11 @@ trait MonitorStream {
 }
 ```
 
-+++
-
 @[1-5]
 @[6-7, 15]
 @[8-14]
+
++++
 
 Monitor (part 2)
 
@@ -311,9 +311,8 @@ class EntityActor(monitorActor: ActorRef, ...)(implicit ...)
  override def receive: Receive = {
   case Migrate =>
    CassandraSource(...).async
-    .via(simple1AsyncFlow).async
-    .via(simple1AsyncFlow).async
-    .via(customExecutionContextFlow(...,
+    .via(simpleAsyncFlow).async
+    .via(customExecutionContextFlow(
       actorSystem.dispatchers
                  .lookup("application.custom-dispatcher"))
                  .async
@@ -323,8 +322,8 @@ class EntityActor(monitorActor: ActorRef, ...)(implicit ...)
 }
 ```
 
-@[1-4, 14-15]
-@[5-13]
+@[1-4, 13-14]
+@[5-12]
 
 +++
 
@@ -352,7 +351,6 @@ Resources
 - [Datastax](http://docs.datastax.com/en/landing_page/doc/landing_page/docList.html)
 - [Akka](https://doc.akka.io/docs/akka/current/scala/index.html)
 - [ScalaTest](http://www.scalatest.org)
-- [akka-stream-cassandra](https://github.com/niqdev/akka-stream-cassandra)
 
 ---
 
