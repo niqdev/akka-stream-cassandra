@@ -33,7 +33,7 @@ to
 
 *Job*
 
-- standalone Scala app
+- standalone `Scala` app
 - reads all rows from old C*
 - converts from old to new entity model
 - basic validation
@@ -96,10 +96,10 @@ class RowFunction extends com.google.common.base.Function
 +++
 
 Issues
-- any step can fail: try/catch approach
+- any step can fail: `try/catch` approach
 - hard to test
 - not reusable
-- low control: sleep is blocking
+- low control: `sleep` is blocking
 
 ---
 
@@ -158,22 +158,6 @@ class EntityActor(monitorActor: ActorRef, ...)(implicit ...)
 
 +++
 
-Package
-
-```scala
-package object stream {
- type AstyanaxRow = Row[String, String]
- type LeftMetadata = (Event, String)
-
- sealed trait Event
- case object SuccessEvent extends Event
- case object WarningEvent extends Event
- case object ErrorEvent extends Event
-}
-```
-
-+++
-
 Source (part 1)
 
 ```scala
@@ -222,6 +206,22 @@ class CassandraSource[K, C](...)(implicit ...)
 
 @[1-4, 7-8, 14-15]
 @[5, 9-14]
+
++++
+
+Package
+
+```scala
+package object stream {
+ type AstyanaxRow = Row[String, String]
+ type LeftMetadata = (Event, String)
+
+ sealed trait Event
+ case object SuccessEvent extends Event
+ case object WarningEvent extends Event
+ case object ErrorEvent extends Event
+}
+```
 
 +++
 
@@ -339,7 +339,7 @@ Benefits
 - any step can fail: `Either[LeftMetadata, T]`
 - simple to test
 - DRY: easy to abstract and reuse streams
-- use `async` + custom `dispatcher`
+- use `async` and custom `dispatcher`
 - back-pressure
 - it's fun!
 
