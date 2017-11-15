@@ -259,20 +259,21 @@ package object stream {
  case class Throttle(sleepMillis: Long) extends FlowControl
 }
 trait MonitorStream {
+ def entityToEventFlow[E]:
+  Flow[Either[LeftMetadata, E], (Event, String), _] = ???
+ def monitorEventActorFlow(monitorActor: ActorRef)(implicit ...):
+   Flow[(Event, String), FlowControl, _] = ???
  def controlDynamicFlow: Flow[FlowControl,FlowControl,NotUsed] =
   Flow[FlowControl] flatMapConcat {
-   case c@Continue =>
-    Source.single(c)
-   case t@Throttle(sleepMillis) =>
-    Source.single(t)
-     .delay(sleepMillis, DelayOverflowStrategy.backpressure)
-  }
-}
+   case c@Continue => Source.single(c)
+   case t@Throttle(sleepMillis) => Source.single(t)
+     .delay(sleepMillis, DelayOverflowStrategy.backpressure) }}
 ```
 
 @[1-5]
-@[6-7, 15]
-@[8-14]
+@[7-8]
+@[9-10]
+@[11-15]
 
 +++
 
@@ -338,7 +339,7 @@ Benefits
 - any step can fail: `Either[LeftMetadata, T]`
 - simple to test
 - DRY: easy to abstract and reuse streams
-- use `async` and custom `dispatcher`
+- use `async` and custom `dispatcher` to increase speed more tha 10 times
 - back-pressure
 - it's fun!
 
