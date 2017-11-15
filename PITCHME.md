@@ -339,7 +339,7 @@ Benefits
 - any step can fail: `Either[LeftMetadata, T]`
 - simple to test
 - DRY: easy to abstract and reuse streams
-- use `async` and custom `dispatcher` to increase speed more tha 10 times
+- use `async` and custom `dispatcher`
 - back-pressure
 - it's fun!
 
