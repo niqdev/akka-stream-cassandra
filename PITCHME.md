@@ -363,7 +363,7 @@ Resources
 
 `Algebraic Data Type`
 
-is just a way to express and combine data type (e.g. String, Event) based on an algebra
+is just a way to express and combine data type (String, Event) based on an algebra
 
 when we say *algebra* we mean sums and products
 
