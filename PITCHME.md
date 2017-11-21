@@ -363,10 +363,10 @@ Resources
 
 `Algebraic Data Type`
 
-is just a way to express and combine data type (String, Event) based on an algebra
+is just a way to express and combine data types like `Either` and `Event` based on an algebra
 
 when we say *algebra* we mean sums and products
 
-in Scala
-* *sum* sealed trait
-* *product* parameter
+in Scala represent
+* *sum*: sealed trait
+* *product*: parameter
