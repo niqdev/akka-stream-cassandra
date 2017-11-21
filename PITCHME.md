@@ -215,6 +215,7 @@ Package
 package object stream {
  type LeftMetadata = (Event, String)
 
+ // ADT
  sealed trait Event
  case object SuccessEvent extends Event
  case object WarningEvent extends Event
@@ -357,3 +358,15 @@ Resources
 ## Thanks!
 
 ### Any Questions?
+
+---
+
+`Algebraic Data Type`
+
+is just a way to express and combine data type (e.g. String, Event) based on an algebra
+
+when we say *algebra* we mean sums and products
+
+in Scala
+* *sum* sealed trait
+* *product* parameter
