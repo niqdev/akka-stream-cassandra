@@ -352,7 +352,7 @@ Resources
 - [Datastax](http://docs.datastax.com/en/landing_page/doc/landing_page/docList.html)
 - [Akka](https://doc.akka.io/docs/akka/current/scala/index.html)
 - [ScalaTest](http://www.scalatest.org)
-- [akka-stream-cassandra](https://gitpitch.com/niqdev/akka-stream-cassandra)
+- [akka-stream-cassandra](https://github.com/niqdev/akka-stream-cassandra)
 
 ---
 
