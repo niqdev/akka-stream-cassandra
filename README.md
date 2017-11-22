@@ -19,6 +19,8 @@ for unsupported and no longer maintained versions of Cassandra and [DataStax Ent
 
 Please prefer [alpakka](https://developer.lightbend.com/docs/alpakka/current/cassandra.html) Cassandra Connector for version 2 and above
 
+Have a look at the presentation of this [lightning talk](https://gitpitch.com/niqdev/akka-stream-cassandra) about Cassandra migration to understand the reason behind this library
+
 ### Setup
 
 Add the [jcenter](http://jcenter.bintray.com) repository in your build definition and import the latest stable version
